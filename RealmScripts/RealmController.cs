@@ -22,6 +22,8 @@ public class RealmController : MonoBehaviour
 
     public static Player currentPlayer; // current logged in player
     public static Stat currentStat; // current stats for this run/playthrough
+    private static App realmApp = App.Create(Constants.Realm.AppId);
+    public static Realms.Sync.User syncUser;
 
     public static async Task<Realm> GetRealm(Realms.Sync.User loggedInUser)
     {
@@ -166,8 +168,8 @@ public class RealmController : MonoBehaviour
             bonusPoints = 50;
         }
 
-        // calculate final points + write to realm with points
         var finalScore = calculatePoints();
+        // calculate final points + write to realm with points
         realm.Write(() =>
         {
             currentStat.Score = finalScore;
