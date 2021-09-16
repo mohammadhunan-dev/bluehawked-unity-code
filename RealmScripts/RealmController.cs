@@ -29,10 +29,10 @@ public class RealmController : MonoBehaviour
         return realm;
     }
 
-    public static void setLoggedInUser(string loggedInUser)
+    public static void setLoggedInUser(string userInput)
     {
         realm = GetRealm();
-        var matchedPlayers = realm.All<Player>().Where(p => p.Name == loggedInUser);
+        var matchedPlayers = realm.All<Player>().Where(p => p.Name == userInput);
 
         if (matchedPlayers.Count() > 0) // if the player exists
         {
@@ -50,7 +50,7 @@ public class RealmController : MonoBehaviour
         {
             var p1 = new Player();
             p1.Id = ObjectId.GenerateNewId().ToString();
-            p1.Name = loggedInUser;
+            p1.Name = userInput;
 
             var s1 = new Stat();
             s1.StatOwner = p1;
