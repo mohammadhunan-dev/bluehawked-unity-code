@@ -145,8 +145,8 @@ public class RealmController : MonoBehaviour
             bonusPoints = 50;
         }
 
-        // calculate final points + write to realm with points
         var finalScore = calculatePoints();
+        // calculate final points + write to realm with points
         realm.Write(() =>
         {
             currentStat.Score = finalScore;
