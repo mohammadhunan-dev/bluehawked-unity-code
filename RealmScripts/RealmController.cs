@@ -25,7 +25,8 @@ public class RealmController : MonoBehaviour
 
     public static Realm GetRealm()
     {
-        // TODO: open a realm and return it
+        realm = Realm.GetInstance();
+        return realm;
     }
 
     public static void setLoggedInUser(string loggedInUser)
@@ -102,6 +103,7 @@ public class RealmController : MonoBehaviour
             bonusPoints = 50;
         }
 
+        var finalScore = calculatePoints();
         // TODO: within a write transaction, create a new Stat for the current player
 
 
