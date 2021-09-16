@@ -25,11 +25,11 @@ public class RealmController : MonoBehaviour
 
     public static Realm GetRealm()
     {
-        realm = Realm.GetInstance();
-        return realm;
+        // TODO: open a realm and return it
+        return null;
     }
 
-    public static void setLoggedInUser(string loggedInUser)
+    public static void setLoggedInUser(string userInput)
     {
         realm = GetRealm();
         // TODO: "Set the `currentPlayer` variable by querying the realm for the
