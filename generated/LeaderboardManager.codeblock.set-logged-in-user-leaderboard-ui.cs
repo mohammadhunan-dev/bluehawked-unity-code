@@ -1,8 +1,8 @@
-public async void setLoggedInUser(string loggedInUser)
+public void setLoggedInUser(string loggedInUser)
 {
     username = loggedInUser;
 
-    realm = await GetRealm();
+    realm = Realm.GetInstance();
 
     // only create the leaderboard on the first run, consecutive restarts/reruns will already have a leaderboard created
     if (isLeaderboardGUICreated == false)
@@ -23,4 +23,6 @@ public async void setLoggedInUser(string loggedInUser)
         setStatListener(); // start listening for score changes once the leaderboard GUI has launched
         isLeaderboardGUICreated = true;
     }
+}
+
 }
