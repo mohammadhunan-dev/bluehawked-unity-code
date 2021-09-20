@@ -65,6 +65,7 @@ public class RealmController : MonoBehaviour
     // deleteCurrentStat() is a method that performs a write transaction to delete the current playthrough Stat object and remove it from the current Player object's Stats' list
     public static void deleteCurrentStat()
     {
+        ScoreCardManager.UnRegisterListener();
         // TODO: within a write transaction, delete the current Stat object, and it's reference in the current Player object
     }
     // restartGame() is a method that creates a new plathrough Stat object and shares this new Stat object with the ScoreCardManager to update in the UI and listen for changes to it
