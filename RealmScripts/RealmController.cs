@@ -1,18 +1,8 @@
-//
-//  RealmController.cs
-//
-//
-//  Copyright © 2020-2021 MongoDB, Inc. All rights reserved.
-//
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Realms;
-using UnityEngine.UI;
-using MongoDB.Bson;
 using System.Threading.Tasks;
 using Realms.Sync;
-using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class RealmController : MonoBehaviour
 {
@@ -20,15 +10,18 @@ public class RealmController : MonoBehaviour
     private static int runTime; // total amount of time you've been playing during this playthrough/run (losing/winning resets runtime)
     private static int bonusPoints = 0; // start with 0 bonus points and at the end of the game we add bonus points based on how long you played
 
-    public static Player currentPlayer; // current logged in player
-    public static Stat currentStat; // current stats for this run/playthrough
+    private static Player currentPlayer; // the Player object for the current playthrough
+    public static Stat currentStat; // the Stat object for the current playthrough
 
-    public static Realm GetRealm()
+    // GetRealm() is a method that returns a realm instance
+    private static Realm GetRealm()
     {
         // TODO: open a realm and return it
         return null;
     }
 
+    // setLoggedInUser() is a method that finds a Player object and creates a new Stat object for the current playthrough
+    // setLoggedInUser() takes a userInput, representing a username, as a parameter
     public static void setLoggedInUser(string userInput)
     {
         realm = GetRealm();
@@ -36,55 +29,64 @@ public class RealmController : MonoBehaviour
         // player. If the player exists, give the player a new Stat object,
         // otherwise create a new player and give the new player a new Stat
         // object
-
         startGame();
     }
 
 
 
-    
 
-    // startGame() begins the timer, increasing runTime every 10 seconds.
-    // The less time a player takes to complete the playthrough/run, the more bonusPoints the player is rewarded
-    public static void startGame()
+    // LogOut() is an asynchronous method that logs out and reloads the scene
+    public static async void LogOut()
     {
-        // record each 10 seconds (runTime will be used to calculate bonus points once the player wins the game)
-        var myTimer = new System.Timers.Timer(10000);
-        myTimer.Enabled = true;
-        myTimer.Elapsed += (sender, e) => runTime += 10;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public static void collectToken() // performs an update on the Character Model's token count
+
+    // startGame() is a method that records how long the player has been playing during the current playthrough (i.e since logging in or since last losing or winning)
+    private static void startGame()
+    {
+        // execute a timer every 10 second
+        var myTimer = new System.Timers.Timer(10000);
+        myTimer.Enabled = true;
+        myTimer.Elapsed += (sender, e) => runTime += 10; // increment runTime (runTime will be used to calculate bonus points once the player wins the game)
+    }
+
+    // collectToken() is a method that performs a write transaction to update the current playthrough Stat object's TokensCollected count
+    public static void collectToken()
     {
         // TODO: within a write transaction, increment the number of token's collected in the current playthrough/run's stat
     }
-    public static void defeatEnemy() // performs an update on the Character Model's enemiesDefeated Count
+    // defeatEnemy() is a method that performs a write transaction to update the current playthrough Stat object's enemiesDefeated count
+    public static void defeatEnemy()
     {
         // TODO: within a write transaction, increment the number of enemies's defeated in the current playthrough/run's stat
     }
 
-    // deleteCurrentScore deletes the stats of the player's current playthrough/run and unregisters the listener on the old stat
-    // deleteCurrentScore is typically called on the "PlayerDeath" event
-    public static void deleteCurrentScore()
+    // deleteCurrentStat() is a method that performs a write transaction to delete the current playthrough Stat object and remove it from the current Player object's Stats' list
+    public static void deleteCurrentStat()
     {
-        ScoreCardManager.unRegisterListener();
-
-        // TODO: within a write transaction, delete the current state. Once the current stat is deleted, remove the reference from the currentPlayer object
+        // TODO: within a write transaction, delete the current Stat object, and it's reference in the current Player object
     }
+    // restartGame() is a method that creates a new plathrough Stat object and shares this new Stat object with the ScoreCardManager to update in the UI and listen for changes to it
     public static void restartGame()
     {
-        if (currentPlayer != null)
+        var s1 = new Stat();
+        s1.StatOwner = currentPlayer;
+        realm.Write(() =>
         {
-            // TODO: within a write transaction, create a new Stat for the current player
+            currentStat = realm.Add(s1);
+            currentPlayer.Stats.Add(currentStat);
+        });
 
-            ScoreCardManager.setCurrentStat(currentStat); // call `setCurrentStat()` to set the current stat in the UI using ScoreCardManager
-            ScoreCardManager.watchForChangesToCurrentStats(); // call `watchForChangesToCurrentStats()` to register a listener on the new score in the ScoreCardManager
+        ScoreCardManager.SetCurrentStat(currentStat); // call `SetCurrentStat()` to set the current stat in the UI using ScoreCardManager
+        ScoreCardManager.WatchForChangesToCurrentStats(); // call `WatchForChangesToCurrentStats()` to register a listener on the new score in the ScoreCardManager
 
-            startGame(); // start the game by resetting the timer and officially starting a new run/playthrough
-        }
+        startGame(); // start the game by resetting the timer and officially starting a new run/playthrough
     }
 
-    public static int[] playerWon()
+
+    // playerWon() is a method that calculates and returns the final score for the current playthrough once the player has won the game
+    public static int playerWon()
     {
         if (runTime <= 30) // if the game is beat in in less than or equal to 30 seconds, +80 bonus points
         {
@@ -103,19 +105,12 @@ public class RealmController : MonoBehaviour
             bonusPoints = 50;
         }
 
-        var finalScore = calculatePoints();
-        // TODO: within a write transaction, create a new Stat for the current player
+        var finalScore = (currentStat.EnemiesDefeated + 1) * (currentStat.TokensCollected + 1) + bonusPoints;
+        realm.Write(() =>
+        {
+            currentStat.Score = finalScore;
+        });
 
-
-        var scoreAndBonusPoints = new int[2];
-        scoreAndBonusPoints[0] = finalScore;
-        scoreAndBonusPoints[1] = bonusPoints;
-
-        return scoreAndBonusPoints; // return the final score and bonus points to display to the UI
-    }
-
-    public static int calculatePoints()
-    {
-        return (currentStat.EnemiesDefeated + 1) * (currentStat.TokensCollected + 1) + bonusPoints;
+        return finalScore;
     }
 }
