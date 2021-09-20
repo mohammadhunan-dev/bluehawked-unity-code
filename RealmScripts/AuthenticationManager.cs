@@ -1,53 +1,38 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class AuthenticationManager : MonoBehaviour
+private class AuthenticationManager : MonoBehaviour
 {
 
-    public static VisualElement root;
-    public static Label subtitle;
-    public static Button startButton;
-    public static bool isShowingRegisterUI = false;
-    public static string loggedInUser;
-    public static TextField userInput;
-    public static Realms.Sync.User syncUser;
-    private static TextField passInput;
-    public static Button toggleLoginOrRegisterUIButton;
-    public static Player currentPlayer;
+    private static VisualElement root;
+    private static Label subtitle;
+    private static Button startButton;
+    private static string loggedInUser;
+    private static TextField userInput;
 
+    private static bool isInRegistrationMode = false; // (Part 2 Sync): isInRegistrationMode is used to toggle between authentication modes
+    private static TextField passInput; // (Part 2 Sync): passInput represents the password input
+    private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
 
+    // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
+    // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
     void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
-
+        authWrapper = root.Q<VisualElement>("auth-wrapper");
+        logoutButton = root.Q<Button>("logout-button");
         subtitle = root.Q<Label>("subtitle");
         startButton = root.Q<Button>("start-button");
         userInput = root.Q<TextField>("username-input");
         passInput = root.Q<TextField>("password-input");
-        passInput.isPasswordField = true; // sync line
-        toggleLoginOrRegisterUIButton = root.Q<Button>("toggle-login-or-register-ui-button");
+        passInput.isPasswordField = true;
 
-        toggleLoginOrRegisterUIButton.clicked += () =>
+        logoutButton.clicked += RealmController.LogOut;
+    //  when the start button is clicked, toggle between registration modes
+        startButton.clicked += () =>
         {
-            // if the registerUI is already visible, switch to the loginUI and set isShowingRegisterUI to false	
-            if (isShowingRegisterUI == true)
-            {
-                switchToLoginUI();
-                isShowingRegisterUI = false;
-            }
-            else
-            {
-                switchToRegisterUI();
-                isShowingRegisterUI = true;
-            }
-        };
-
-        startButton.clicked += async () =>
-        {
-            if (isShowingRegisterUI == true)
+            if (isInRegistrationMode == true)
             {
                 onPressRegister();
             }
@@ -56,15 +41,32 @@ public class AuthenticationManager : MonoBehaviour
                 onPressLogin();
             }
         };
+        toggleLoginOrRegisterUIButton = root.Q<Button>("toggle-login-or-register-ui-button");
+        toggleLoginOrRegisterUIButton.clicked += () =>
+        {
+            // if already in registration mode, switch to the login mode and set isInRegistrationMode to false
+            if (isInRegistrationMode == true)
+            {
+                switchToLoginUI();
+                isInRegistrationMode = false;
+            }
+            else
+            {
+                switchToRegisterUI();
+                isInRegistrationMode = true;
+            }
+        };
     }
 
-    public static void switchToLoginUI()
+    // switchToLoginUI() is a method that switches the UI to the Login UI mode
+    private static void switchToLoginUI()
     {
         subtitle.text = "Login";
         startButton.text = "Login & Start Game";
         toggleLoginOrRegisterUIButton.text = "Don't have an account yet? Register";
     }
-    public static void switchToRegisterUI()
+    // switchToRegisterUI() is a method that switches the UI to the Register UI mode
+    private static void switchToRegisterUI()
     {
         subtitle.text = "Register";
         startButton.text = "Signup & Start Game";
@@ -72,11 +74,14 @@ public class AuthenticationManager : MonoBehaviour
     }
 
 
-    public static async void onPressLogin()
+
+    // onPressLogin() is an asynchronous method that calls RealmController.setLoggedInUser to login with the values from the userInput and passInput
+    // and passes the currentPlayer to ScoreCardManager and LeaderboardManager; once logged in the login screen is hidden and the logout button is shown
+    private static async void onPressLogin()
     {
         try
         {
-            currentPlayer = await RealmController.setLoggedInUser(userInput.value, passInput.value);
+            var currentPlayer = await RealmController.setLoggedInUser(userInput.value, passInput.value);
             if (currentPlayer != null)
             {
                 root.AddToClassList("hide");
@@ -89,11 +94,13 @@ public class AuthenticationManager : MonoBehaviour
             Debug.Log("an exception was thrown:" + ex.Message);
         }
     }
-    public static async void onPressRegister()
+    // onPressRegister() is a method that passes RealmController.OnPressRegister() the
+    // values of the userInput and  passInput TextFields in order to register a user
+    private static async void onPressRegister()
     {
         try
         {
-            currentPlayer = await RealmController.OnPressRegister(userInput.value, passInput.value);
+            var currentPlayer = await RealmController.OnPressRegister(userInput.value, passInput.value);
 
             if (currentPlayer != null)
             {
