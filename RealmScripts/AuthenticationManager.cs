@@ -1,29 +1,31 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class AuthenticationManager : MonoBehaviour
+private class AuthenticationManager : MonoBehaviour
 {
 
-    public static VisualElement root;
-    public static Label subtitle;
-    public static Button startButton;
-    public static bool isShowingRegisterUI = false;
-    public static string loggedInUser;
-    public static TextField userInput;
+    private static VisualElement root;
+    private static Label subtitle;
+    private static Button startButton;
+    private static bool isInRegistrationMode = false;
+    private static string loggedInUser;
+    private static TextField userInput;
+    private static TextField passInput; // (Part 2 Sync): passInput represents the password input
+    private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
 
+    // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
+    // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
     void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
-
+        authWrapper = root.Q<VisualElement>("auth-wrapper");
         subtitle = root.Q<Label>("subtitle");
         startButton = root.Q<Button>("start-button");
-
+        logoutButton = root.Q<Button>("logout-button");
         userInput = root.Q<TextField>("username-input");
 
-
+        logoutButton.clicked += RealmController.LogOut;
         startButton.clicked += () =>
         {
             onPressLogin();
@@ -31,8 +33,8 @@ public class AuthenticationManager : MonoBehaviour
     }
 
 
-
-    public static void onPressLogin()
+    // onPressLogin() is a method that passes the username to the RealmController, ScoreCardManager, and LeaderboardManager
+    private static void onPressLogin()
     {
         try
         {
@@ -47,6 +49,7 @@ public class AuthenticationManager : MonoBehaviour
             Debug.Log("an exception was thrown:" + ex.Message);
         }
     }
+
 
 }
 
