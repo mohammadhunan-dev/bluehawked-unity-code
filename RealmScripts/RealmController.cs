@@ -97,7 +97,6 @@ public class RealmController : MonoBehaviour
     public static void deleteCurrentStat()
     {
         ScoreCardManager.UnRegisterListener();
-
         realm.Write(() =>
         {
             realm.Remove(currentStat);
