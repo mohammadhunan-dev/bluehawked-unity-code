@@ -21,6 +21,7 @@ public class LeaderboardManager : MonoBehaviour
     {
         Instance = this;
     }
+    // GetRealm() is an asynchronous method that returns a synced realm
     private static async Task<Realm> GetRealm()
     {
         var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", RealmController.syncUser);
