@@ -10,6 +10,8 @@ public class ScoreCardManager : MonoBehaviour
     private static Label scoreCardHeader;
     private static string username;
     private static Stat currentStat;
+
+    private static PropertyChangedEventHandler propertyHandler;
     void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -38,7 +40,7 @@ public class ScoreCardManager : MonoBehaviour
     public static void WatchForChangesToCurrentStats()
     {
         // create a listener that responds to changes to the particular stats for this run/playthrough
-        var propertyHandler = new PropertyChangedEventHandler((sender, e) => updateCurrentStats());
+        propertyHandler = new PropertyChangedEventHandler((sender, e) => updateCurrentStats());
         currentStat.PropertyChanged += propertyHandler;
     }
     // UnRegisterListener() is a method that removes a property handler on the current playthrough Stat object
