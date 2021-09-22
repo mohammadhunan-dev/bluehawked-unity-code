@@ -10,6 +10,8 @@ public class ScoreCardManager : MonoBehaviour
     private static Label scoreCardHeader;
     private static string username;
     private static Stat currentStat;
+
+    private static PropertyChangedEventHandler propertyHandler;
     void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
