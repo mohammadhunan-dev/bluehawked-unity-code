@@ -42,8 +42,9 @@ public class LeaderboardManager : MonoBehaviour
     // getRealmPlayerTopStat() is a method that queries a realm for the player's Stat object with the highest score
     private int getRealmPlayerTopStat()
     {
-        // TODO: Query the realm instance for the current player, find the current player's top score and return that value
-         return 0;
+        var realmPlayer = realm.All<Player>().Where(p => p.Name == username).First();
+        var realmPlayerTopStat = realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
+        return realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
     }
     // createLeaderboardUI() is a method that creates a Leaderboard title for
     // the UI and calls createTopStatListView() to create a list of Stat objects
@@ -55,7 +56,7 @@ public class LeaderboardManager : MonoBehaviour
         displayTitle.text = "Leaderboard:";
         displayTitle.AddToClassList("display-title");
 
-        // TODO: Query the realm instance for all stats, and order by the highest scores to the lowest scores
+        topStats = realm.All<Stat>().OrderByDescending(s => s.Score).ToList();
         createTopStatListView();
     }
     // createTopStatListView() is a method that creates a set of Labels containing high stats
