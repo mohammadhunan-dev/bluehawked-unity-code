@@ -5,8 +5,6 @@ using System.ComponentModel;
 
 public class ScoreCardManager : MonoBehaviour
 {
-    public static ScoreCardManager Instance;
-
     private Realm realm;
     private VisualElement root;
     private Label scoreCardHeader;
@@ -14,11 +12,6 @@ public class ScoreCardManager : MonoBehaviour
     private Stat currentStat;
 
     private PropertyChangedEventHandler propertyHandler;
-
-    void Awake()
-    {
-        Instance = this;
-    }
 
     void Start()
     {

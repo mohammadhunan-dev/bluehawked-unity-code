@@ -4,8 +4,6 @@ using UnityEngine.UIElements;
 
 public class AuthenticationManager : MonoBehaviour
 {
-    public AuthenticationManager Instance;
-
     private VisualElement root;
     private VisualElement authWrapper;
     private Label subtitle;
@@ -20,11 +18,6 @@ public class AuthenticationManager : MonoBehaviour
 
     // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
     // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
-
-    void Awake()
-    {
-        Instance = this;
-    }
 
     void Start()
     {

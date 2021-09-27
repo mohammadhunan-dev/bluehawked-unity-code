@@ -8,8 +8,6 @@ using Realms.Sync;
 using System.Threading.Tasks;
 public class LeaderboardManager : MonoBehaviour
 {
-    public static LeaderboardManager Instance;
-
     private Realm realm;
     private VisualElement root;
     private ListView listView;
@@ -18,11 +16,6 @@ public class LeaderboardManager : MonoBehaviour
     private bool isLeaderboardUICreated = false;
     private List<Stat> topStats;
     private IDisposable listenerToken;  // (Part 2 Sync): listenerToken is the token for registering a change listener on all Stat objects
-
-    void Awake()
-    {
-        Instance = this;
-    }
 
     // GetRealm() is an asynchronous method that returns a synced realm
     private async Task<Realm> GetRealm()
