@@ -9,43 +9,14 @@ public class RealmController : MonoBehaviour
 {
     public static RealmController Instance;
 
+    public Stat currentStat; // the Stat object for the current playthrough
+    public User syncUser; // (Part 2 Sync): syncUser represents the realmApp's currently logged in use
+
     private Realm realm;
     private int runTime; // total amount of time you've been playing during this playthrough/run (losing/winning resets runtime)
     private int bonusPoints = 0; // start with 0 bonus points and at the end of the game we add bonus points based on how long you played
-
     private Player currentPlayer; // the Player object for the current playthrough
-    public Stat currentStat; // the Stat object for the current playthrough
-
     private App realmApp = App.Create(Constants.Realm.AppId); // (Part 2 Sync): realmApp represents the MongoDB Realm backend application
-    public User syncUser; // (Part 2 Sync): syncUser represents the realmApp's currently logged in use
-
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        // Attach C# Scripts to UI GameObjects
-        var authScreen = GameObject.Find("AuthenticationScreen");
-        authScreen.AddComponent<AuthenticationManager>();
-
-        var leaderboard = GameObject.Find("Leaderboard");
-        leaderboard.AddComponent<LeaderboardManager>();
-
-        var scorecard = GameObject.Find("Scorecard");
-        scorecard.AddComponent<ScoreCardManager>();
-
-    }
-
-    // GetRealm() is an asynchronous method that returns a synced realm
-    // GetRealm() takes a logged in Realms.Sync.User as a parameter
-    private async Task<Realm> GetRealm(User loggedInUser)
-    {
-        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", loggedInUser);
-        return await Realm.GetInstanceAsync(syncConfiguration);
-    }
-
 
     // setLoggedInUser() is an asynchronous method that logs in as a Realms.Sync.User, creates a new Stat object for the current playthrough
     // and returns the Player object that corresponds to the logged in Realms.Sync.User
@@ -99,22 +70,11 @@ public class RealmController : MonoBehaviour
         return currentPlayer;
     }
 
-
     // LogOut() is an asynchronous method that logs out and reloads the scene
     public async void LogOut()
     {
         await syncUser.LogOutAsync();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-
-    // startGame() is a method that records how long the player has been playing during the current playthrough (i.e since logging in or since last losing or winning)
-    private void StartGame()
-    {
-        // execute a timer every 10 second
-        var myTimer = new System.Timers.Timer(10000);
-        myTimer.Enabled = true;
-        myTimer.Elapsed += (sender, e) => runTime += 10; // increment runTime (runTime will be used to calculate bonus points once the player wins the game)
     }
 
     // collectToken() is a method that performs a write transaction to update the current playthrough Stat object's TokensCollected count
@@ -190,4 +150,41 @@ public class RealmController : MonoBehaviour
 
         return finalScore;
     }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        // Attach C# Scripts to UI GameObjects
+        var authScreen = GameObject.Find("AuthenticationScreen");
+        authScreen.AddComponent<AuthenticationManager>();
+
+        var leaderboard = GameObject.Find("Leaderboard");
+        leaderboard.AddComponent<LeaderboardManager>();
+
+        var scorecard = GameObject.Find("Scorecard");
+        scorecard.AddComponent<ScoreCardManager>();
+
+    }
+
+    // GetRealm() is an asynchronous method that returns a synced realm
+    // GetRealm() takes a logged in Realms.Sync.User as a parameter
+    private async Task<Realm> GetRealm(User loggedInUser)
+    {
+        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", loggedInUser);
+        return await Realm.GetInstanceAsync(syncConfiguration);
+    }
+
+    // startGame() is a method that records how long the player has been playing during the current playthrough (i.e since logging in or since last losing or winning)
+    private void StartGame()
+    {
+        // execute a timer every 10 second
+        var myTimer = new System.Timers.Timer(10000);
+        myTimer.Enabled = true;
+        myTimer.Elapsed += (sender, e) => runTime += 10; // increment runTime (runTime will be used to calculate bonus points once the player wins the game)
+    }
+    
 }

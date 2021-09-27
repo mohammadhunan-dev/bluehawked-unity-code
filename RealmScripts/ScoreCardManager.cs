@@ -10,14 +10,7 @@ public class ScoreCardManager : MonoBehaviour
     private Label scoreCardHeader;
     private string username;
     private Stat currentStat;
-
     private PropertyChangedEventHandler propertyHandler;
-
-    private void Start()
-    {
-        root = GetComponent<UIDocument>().rootVisualElement;
-        scoreCardHeader = root.Q<Label>("score-card-header");
-    }
 
     // setLoggedInUser() is a method that sets values that are displayed in the ScoreCard UI, such as the username and current Stat,
     // and calls WatchForChangesToCurrentStats to watch for changes to the current Stat object
@@ -28,6 +21,7 @@ public class ScoreCardManager : MonoBehaviour
         UpdateCurrentStats(); // set initial stats
         WatchForChangesToCurrentStats();
     }
+
     // updateCurrentStats() is a method that updates the EnemiesDefeated,TokensCollected, and Score in the UI
     public void UpdateCurrentStats() // updates stats in UI
     {
@@ -44,6 +38,7 @@ public class ScoreCardManager : MonoBehaviour
         propertyHandler = new PropertyChangedEventHandler((sender, e) => UpdateCurrentStats());
         currentStat.PropertyChanged += propertyHandler;
     }
+
     // UnRegisterListener() is a method that removes a property handler on the current playthrough Stat object
     // and resets the ScoreCard UI to it's initial values
     public void UnRegisterListener()
@@ -54,8 +49,8 @@ public class ScoreCardManager : MonoBehaviour
         "Enemies Defeated: " + 0 + "\n" +
         "Tokens Collected: " + 0 + "\n" +
         "Current Score: " + 0;
-
     }
+
     // SetCurrentStat() is a method that sets the current playthrough Stat object
     // and calls updateCurrentStats() to update the UI
     public void SetCurrentStat(Stat newStat)
@@ -63,5 +58,11 @@ public class ScoreCardManager : MonoBehaviour
         // called when the game has reset
         currentStat = newStat;
         UpdateCurrentStats();
+    }
+
+    private void Start()
+    {
+        root = GetComponent<UIDocument>().rootVisualElement;
+        scoreCardHeader = root.Q<Label>("score-card-header");
     }
 }

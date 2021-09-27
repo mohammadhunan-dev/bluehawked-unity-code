@@ -17,12 +17,6 @@ public class LeaderboardManager : MonoBehaviour
     private List<Stat> topStats;
     private IDisposable listenerToken;  // (Part 2 Sync): listenerToken is the token for registering a change listener on all Stat objects
 
-    // GetRealm() is an asynchronous method that returns a synced realm
-    private async Task<Realm> GetRealm()
-    {
-        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", FindObjectOfType<RealmController>().syncUser);
-        return await Realm.GetInstanceAsync(syncConfiguration);
-    }
     // setLoggedInUser() is an asynchronous method that opens a realm, calls the createLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
     // and calls setStatListener() to start listening for changes to all Stat objects in order to update the global leaderboard
     // setLoggedInUser()  takes a userInput, representing a username, as a parameter
@@ -43,6 +37,15 @@ public class LeaderboardManager : MonoBehaviour
         }
         SetStatListener();
     }
+
+    private void OnDisable()
+    {
+        if (listenerToken != null)
+        {
+            listenerToken.Dispose();
+        }
+    }
+
     // getRealmPlayerTopStat() is a method that queries a realm for the player's Stat object with the highest score
     private int GetRealmPlayerTopStat()
     {
@@ -50,6 +53,7 @@ public class LeaderboardManager : MonoBehaviour
         var realmPlayerTopStat = realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
         return realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
     }
+
     // createLeaderboardUI() is a method that creates a Leaderboard title for
     // the UI and calls createTopStatListView() to create a list of Stat objects
     // with high scores
@@ -63,6 +67,14 @@ public class LeaderboardManager : MonoBehaviour
         topStats = realm.All<Stat>().OrderByDescending(s => s.Score).ToList();
         CreateTopStatListView();
     }
+
+    // GetRealm() is an asynchronous method that returns a synced realm
+    private async Task<Realm> GetRealm()
+    {
+        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", FindObjectOfType<RealmController>().syncUser);
+        return await Realm.GetInstanceAsync(syncConfiguration);
+    }
+
     // createTopStatListView() is a method that creates a set of Labels containing high stats
     private void CreateTopStatListView()
     {
@@ -110,6 +122,7 @@ public class LeaderboardManager : MonoBehaviour
         listView.AddToClassList("list-view");
 
     }
+
     // setStatListener is a method that sets a listener on all Stat objects, and calls setNewlyInsertedScores if one has been inserted
     private void SetStatListener()
     {
@@ -160,11 +173,5 @@ public class LeaderboardManager : MonoBehaviour
             }
         }
     }
-    private void OnDisable()
-    {
-        if (listenerToken != null)
-        {
-            listenerToken.Dispose();
-        }
-    }
+    
 }

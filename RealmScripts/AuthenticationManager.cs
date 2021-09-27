@@ -16,9 +16,50 @@ public class AuthenticationManager : MonoBehaviour
     private TextField passInput; // (Part 2 Sync): passInput represents the password input
     private Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
 
+    // onPressLogin() is an asynchronous method that calls RealmController.setLoggedInUser to login with the values from the userInput and passInput
+    // and passes the currentPlayer to ScoreCardManager and LeaderboardManager; once logged in the login screen is hidden and the logout button is shown
+    private async void OnPressLogin()
+    {
+        try
+        {
+            var currentPlayer = await FindObjectOfType<RealmController>().SetLoggedInUser(userInput.value, passInput.value);
+            if (currentPlayer != null)
+            {
+                root.AddToClassList("hide");
+            }
+            FindObjectOfType<ScoreCardManager>().SetLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<LeaderboardManager>().SetLoggedInUser(currentPlayer.Name);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("an exception was thrown:" + ex.Message);
+        }
+    }
+
+    // onPressRegister() is a method that passes RealmController.OnPressRegister() the
+    // values of the userInput and  passInput TextFields in order to register a user
+    private async void OnPressRegister()
+    {
+        try
+        {
+            var currentPlayer = await FindObjectOfType<RealmController>().OnPressRegister(userInput.value, passInput.value);
+
+            if (currentPlayer != null)
+            {
+                root.AddToClassList("hide");
+            }
+            FindObjectOfType<ScoreCardManager>().SetLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<LeaderboardManager>().SetLoggedInUser(currentPlayer.Name);
+
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("an exception was thrown:" + ex.Message);
+        }
+    }
+
     // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
     // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
-
     private void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -74,48 +115,5 @@ public class AuthenticationManager : MonoBehaviour
         startButton.text = "Signup & Start Game";
         toggleLoginOrRegisterUIButton.text = "Have an account already? Login";
     }
-
-
-
-    // onPressLogin() is an asynchronous method that calls RealmController.setLoggedInUser to login with the values from the userInput and passInput
-    // and passes the currentPlayer to ScoreCardManager and LeaderboardManager; once logged in the login screen is hidden and the logout button is shown
-    private async void OnPressLogin()
-    {
-        try
-        {
-            var currentPlayer = await FindObjectOfType<RealmController>().SetLoggedInUser(userInput.value, passInput.value);
-            if (currentPlayer != null)
-            {
-                root.AddToClassList("hide");
-            }
-            FindObjectOfType<ScoreCardManager>().SetLoggedInUser(currentPlayer.Name);
-            FindObjectOfType<LeaderboardManager>().SetLoggedInUser(currentPlayer.Name);
-        }
-        catch (Exception ex)
-        {
-            Debug.Log("an exception was thrown:" + ex.Message);
-        }
-    }
-    // onPressRegister() is a method that passes RealmController.OnPressRegister() the
-    // values of the userInput and  passInput TextFields in order to register a user
-    private async void OnPressRegister()
-    {
-        try
-        {
-            var currentPlayer = await FindObjectOfType<RealmController>().OnPressRegister(userInput.value, passInput.value);
-
-            if (currentPlayer != null)
-            {
-                root.AddToClassList("hide");
-            }
-            FindObjectOfType<ScoreCardManager>().SetLoggedInUser(currentPlayer.Name);
-            FindObjectOfType<LeaderboardManager>().SetLoggedInUser(currentPlayer.Name);
-
-        }
-        catch (Exception ex)
-        {
-            Debug.Log("an exception was thrown:" + ex.Message);
-        }
-    }
+    
 }
-
