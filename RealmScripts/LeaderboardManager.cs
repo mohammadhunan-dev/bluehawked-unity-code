@@ -160,7 +160,7 @@ public class LeaderboardManager : MonoBehaviour
             }
         }
     }
-    void OnDisable()
+    private void OnDisable()
     {
         if (listenerToken != null)
         {

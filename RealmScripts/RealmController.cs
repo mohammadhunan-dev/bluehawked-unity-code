@@ -19,7 +19,7 @@ public class RealmController : MonoBehaviour
     private App realmApp = App.Create(Constants.Realm.AppId); // (Part 2 Sync): realmApp represents the MongoDB Realm backend application
     public User syncUser; // (Part 2 Sync): syncUser represents the realmApp's currently logged in use
 
-    void Awake()
+    private void Awake()
     {
         Instance = this;
     }
