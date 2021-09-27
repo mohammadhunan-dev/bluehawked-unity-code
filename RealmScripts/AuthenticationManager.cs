@@ -37,7 +37,7 @@ public class AuthenticationManager : MonoBehaviour
         passInput = root.Q<TextField>("password-input");
         passInput.isPasswordField = true;
 
-        logoutButton.clicked += RealmController.Instance.LogOut;
+        logoutButton.clicked += FindObjectOfType<RealmController>().LogOut;
         //  when the start button is clicked, toggle between registration modes
         startButton.clicked += () =>
         {
@@ -90,13 +90,13 @@ public class AuthenticationManager : MonoBehaviour
     {
         try
         {
-            var currentPlayer = await RealmController.Instance.setLoggedInUser(userInput.value, passInput.value);
+            var currentPlayer = await FindObjectOfType<RealmController>().setLoggedInUser(userInput.value, passInput.value);
             if (currentPlayer != null)
             {
                 root.AddToClassList("hide");
             }
-            ScoreCardManager.Instance.setLoggedInUser(currentPlayer.Name);
-            LeaderboardManager.Instance.setLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<ScoreCardManager>().setLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<LeaderboardManager>().setLoggedInUser(currentPlayer.Name);
         }
         catch (Exception ex)
         {
@@ -109,14 +109,14 @@ public class AuthenticationManager : MonoBehaviour
     {
         try
         {
-            var currentPlayer = await RealmController.Instance.OnPressRegister(userInput.value, passInput.value);
+            var currentPlayer = await FindObjectOfType<RealmController>().OnPressRegister(userInput.value, passInput.value);
 
             if (currentPlayer != null)
             {
                 root.AddToClassList("hide");
             }
-            ScoreCardManager.Instance.setLoggedInUser(currentPlayer.Name);
-            LeaderboardManager.Instance.setLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<ScoreCardManager>().setLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<LeaderboardManager>().setLoggedInUser(currentPlayer.Name);
 
         }
         catch (Exception ex)

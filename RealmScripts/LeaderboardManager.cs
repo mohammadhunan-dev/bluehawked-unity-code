@@ -27,7 +27,7 @@ public class LeaderboardManager : MonoBehaviour
     // GetRealm() is an asynchronous method that returns a synced realm
     private async Task<Realm> GetRealm()
     {
-        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", RealmController.Instance.syncUser);
+        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", FindObjectOfType<RealmController>().syncUser);
         return await Realm.GetInstanceAsync(syncConfiguration);
     }
     // setLoggedInUser() is an asynchronous method that opens a realm, calls the createLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component

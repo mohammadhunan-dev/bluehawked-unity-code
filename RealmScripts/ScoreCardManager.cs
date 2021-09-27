@@ -31,7 +31,7 @@ public class ScoreCardManager : MonoBehaviour
     public void setLoggedInUser(string loggedInUser)
     {
         username = loggedInUser;
-        currentStat = RealmController.Instance.currentStat;
+        currentStat = FindObjectOfType<RealmController>().currentStat;
         updateCurrentStats(); // set initial stats
         WatchForChangesToCurrentStats();
     }
