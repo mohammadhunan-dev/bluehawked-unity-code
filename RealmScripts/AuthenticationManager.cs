@@ -1,23 +1,30 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class AuthenticationManager : MonoBehaviour
 {
-    private static VisualElement root;
-    private static VisualElement authWrapper;
-    private static Label subtitle;
-    private static Button startButton;
-    private static Button logoutButton;
-    private static string loggedInUser;
-    private static TextField userInput;
+    public AuthenticationManager Instance;
 
-    private static bool isInRegistrationMode = false; // (Part 2 Sync): isInRegistrationMode is used to toggle between authentication modes
-    private static TextField passInput; // (Part 2 Sync): passInput represents the password input
-    private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
+    private VisualElement root;
+    private VisualElement authWrapper;
+    private Label subtitle;
+    private Button startButton;
+    private Button logoutButton;
+    private string loggedInUser;
+    private TextField userInput;
+
+    private bool isInRegistrationMode = false; // (Part 2 Sync): isInRegistrationMode is used to toggle between authentication modes
+    private TextField passInput; // (Part 2 Sync): passInput represents the password input
+    private Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
 
     // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
     // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -30,7 +37,7 @@ public class AuthenticationManager : MonoBehaviour
         passInput = root.Q<TextField>("password-input");
         passInput.isPasswordField = true;
 
-        logoutButton.clicked += RealmController.LogOut;
+        logoutButton.clicked += RealmController.Instance.LogOut;
         //  when the start button is clicked, toggle between registration modes
         startButton.clicked += () =>
         {
@@ -61,14 +68,14 @@ public class AuthenticationManager : MonoBehaviour
     }
 
     // switchToLoginUI() is a method that switches the UI to the Login UI mode
-    private static void switchToLoginUI()
+    private void switchToLoginUI()
     {
         subtitle.text = "Login";
         startButton.text = "Login & Start Game";
         toggleLoginOrRegisterUIButton.text = "Don't have an account yet? Register";
     }
     // switchToRegisterUI() is a method that switches the UI to the Register UI mode
-    private static void switchToRegisterUI()
+    private void switchToRegisterUI()
     {
         subtitle.text = "Register";
         startButton.text = "Signup & Start Game";
@@ -79,16 +86,16 @@ public class AuthenticationManager : MonoBehaviour
 
     // onPressLogin() is an asynchronous method that calls RealmController.setLoggedInUser to login with the values from the userInput and passInput
     // and passes the currentPlayer to ScoreCardManager and LeaderboardManager; once logged in the login screen is hidden and the logout button is shown
-    private static async void onPressLogin()
+    private async void onPressLogin()
     {
         try
         {
-            var currentPlayer = await RealmController.setLoggedInUser(userInput.value, passInput.value);
+            var currentPlayer = await RealmController.Instance.setLoggedInUser(userInput.value, passInput.value);
             if (currentPlayer != null)
             {
                 root.AddToClassList("hide");
             }
-            ScoreCardManager.setLoggedInUser(currentPlayer.Name);
+            ScoreCardManager.Instance.setLoggedInUser(currentPlayer.Name);
             LeaderboardManager.Instance.setLoggedInUser(currentPlayer.Name);
         }
         catch (Exception ex)
@@ -102,13 +109,13 @@ public class AuthenticationManager : MonoBehaviour
     {
         try
         {
-            var currentPlayer = await RealmController.OnPressRegister(userInput.value, passInput.value);
+            var currentPlayer = await RealmController.Instance.OnPressRegister(userInput.value, passInput.value);
 
             if (currentPlayer != null)
             {
                 root.AddToClassList("hide");
             }
-            ScoreCardManager.setLoggedInUser(currentPlayer.Name);
+            ScoreCardManager.Instance.setLoggedInUser(currentPlayer.Name);
             LeaderboardManager.Instance.setLoggedInUser(currentPlayer.Name);
 
         }

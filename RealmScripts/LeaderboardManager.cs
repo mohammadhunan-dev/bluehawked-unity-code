@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 public class LeaderboardManager : MonoBehaviour
 {
     public static LeaderboardManager Instance;
+
     private Realm realm;
     private VisualElement root;
     private ListView listView;
@@ -24,9 +25,9 @@ public class LeaderboardManager : MonoBehaviour
     }
 
     // GetRealm() is an asynchronous method that returns a synced realm
-    private static async Task<Realm> GetRealm()
+    private async Task<Realm> GetRealm()
     {
-        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", RealmController.syncUser);
+        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", RealmController.Instance.syncUser);
         return await Realm.GetInstanceAsync(syncConfiguration);
     }
     // setLoggedInUser() is an asynchronous method that opens a realm, calls the createLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
