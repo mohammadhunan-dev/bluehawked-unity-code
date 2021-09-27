@@ -7,27 +7,15 @@ using MongoDB.Bson;
 using System.Linq;
 public class RealmController : MonoBehaviour
 {
-    private Realm realm;
-    private int runTime; // total amount of time you've been playing during this playthrough/run (losing/winning resets runtime)
-    private int bonusPoints = 0; // start with 0 bonus points and at the end of the game we add bonus points based on how long you played
+    private static Realm realm;
+    private static int runTime; // total amount of time you've been playing during this playthrough/run (losing/winning resets runtime)
+    private static int bonusPoints = 0; // start with 0 bonus points and at the end of the game we add bonus points based on how long you played
 
-    private Player currentPlayer; // the Player object for the current playthrough
-    public Stat currentStat; // the Stat object for the current playthrough
+    private static Player currentPlayer; // the Player object for the current playthrough
+    public static Stat currentStat; // the Stat object for the current playthrough
 
-    private App realmApp = App.Create(Constants.Realm.AppId); // (Part 2 Sync): realmApp represents the MongoDB Realm backend application
-    public User syncUser; // (Part 2 Sync): syncUser represents the realmApp's currently logged in user
-
-    private ScoreCardManager scoreCardManager = default;
-
-    public static RealmController FindGameObject()
-    {
-        return FindObjectOfType<RealmController>();
-    }
-
-    private void Awake()
-    {
-        scoreCardManager = FindObjectOfType<ScoreCardManager>();
-    }
+    private static App realmApp = App.Create(Constants.Realm.AppId); // (Part 2 Sync): realmApp represents the MongoDB Realm backend application
+    public static User syncUser; // (Part 2 Sync): syncUser represents the realmApp's currently logged in use
 
     private void Start()
     {
@@ -45,7 +33,7 @@ public class RealmController : MonoBehaviour
 
     // GetRealm() is an asynchronous method that returns a synced realm
     // GetRealm() takes a logged in Realms.Sync.User as a parameter
-    private async Task<Realm> GetRealm(User loggedInUser)
+    private static async Task<Realm> GetRealm(User loggedInUser)
     {
         var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", loggedInUser);
         return await Realm.GetInstanceAsync(syncConfiguration);
@@ -55,7 +43,7 @@ public class RealmController : MonoBehaviour
     // setLoggedInUser() is an asynchronous method that logs in as a Realms.Sync.User, creates a new Stat object for the current playthrough
     // and returns the Player object that corresponds to the logged in Realms.Sync.User
     // setLoggedInUser() takes a userInput and passInput, representing a username/password, as a parameter
-    public async Task<Player> setLoggedInUser(string userInput, string passInput)
+    public static async Task<Player> setLoggedInUser(string userInput, string passInput)
     {
         syncUser = await realmApp.LogInAsync(Credentials.EmailPassword(userInput, passInput));
         if (syncUser != null)
@@ -83,7 +71,7 @@ public class RealmController : MonoBehaviour
 
     // OnPressRegister() is an asynchronous method that registers as a Realms.Sync.User, creates a new Player and Stat object 
     // OnPressRegister takes a userInput and passInput, representing a username/password, as a parameter
-    public async Task<Player> OnPressRegister(string userInput, string passInput)
+    public static async Task<Player> OnPressRegister(string userInput, string passInput)
     {
         await realmApp.EmailPasswordAuth.RegisterUserAsync(userInput, passInput);
         syncUser = await realmApp.LogInAsync(Credentials.EmailPassword(userInput, passInput));
@@ -106,7 +94,7 @@ public class RealmController : MonoBehaviour
 
 
     // LogOut() is an asynchronous method that logs out and reloads the scene
-    public async void LogOut()
+    public static async void LogOut()
     {
         await syncUser.LogOutAsync();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -114,7 +102,7 @@ public class RealmController : MonoBehaviour
 
 
     // startGame() is a method that records how long the player has been playing during the current playthrough (i.e since logging in or since last losing or winning)
-    private void startGame()
+    private static void startGame()
     {
         // execute a timer every 10 second
         var myTimer = new System.Timers.Timer(10000);
@@ -123,7 +111,7 @@ public class RealmController : MonoBehaviour
     }
 
     // collectToken() is a method that performs a write transaction to update the current playthrough Stat object's TokensCollected count
-    public void collectToken()
+    public static void collectToken()
     {
         realm.Write(() =>
         {
@@ -131,7 +119,7 @@ public class RealmController : MonoBehaviour
         });
     }
     // defeatEnemy() is a method that performs a write transaction to update the current playthrough Stat object's enemiesDefeated count
-    public void defeatEnemy()
+    public static void defeatEnemy()
     {
         realm.Write(() =>
         {
@@ -140,9 +128,9 @@ public class RealmController : MonoBehaviour
     }
 
     // deleteCurrentStat() is a method that performs a write transaction to delete the current playthrough Stat object and remove it from the current Player object's Stats' list
-    public void deleteCurrentStat()
+    public static void deleteCurrentStat()
     {
-        scoreCardManager.UnRegisterListener();
+        ScoreCardManager.UnRegisterListener();
         realm.Write(() =>
         {
             realm.Remove(currentStat);
@@ -150,7 +138,7 @@ public class RealmController : MonoBehaviour
         });
     }
     // restartGame() is a method that creates a new plathrough Stat object and shares this new Stat object with the ScoreCardManager to update in the UI and listen for changes to it
-    public void restartGame()
+    public static void restartGame()
     {
         var s1 = new Stat();
         s1.StatOwner = currentPlayer;
@@ -160,15 +148,15 @@ public class RealmController : MonoBehaviour
             currentPlayer.Stats.Add(currentStat);
         });
 
-        scoreCardManager.SetCurrentStat(currentStat); // call `SetCurrentStat()` to set the current stat in the UI using ScoreCardManager
-        scoreCardManager.WatchForChangesToCurrentStats(); // call `WatchForChangesToCurrentStats()` to register a listener on the new score in the ScoreCardManager
+        ScoreCardManager.SetCurrentStat(currentStat); // call `SetCurrentStat()` to set the current stat in the UI using ScoreCardManager
+        ScoreCardManager.WatchForChangesToCurrentStats(); // call `WatchForChangesToCurrentStats()` to register a listener on the new score in the ScoreCardManager
 
         startGame(); // start the game by resetting the timer and officially starting a new run/playthrough
     }
 
 
     // playerWon() is a method that calculates and returns the final score for the current playthrough once the player has won the game
-    public int playerWon()
+    public static int playerWon()
     {
         if (runTime <= 30) // if the game is beat in in less than or equal to 30 seconds, +80 bonus points
         {

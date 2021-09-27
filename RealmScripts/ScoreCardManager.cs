@@ -5,20 +5,13 @@ using System.ComponentModel;
 
 public class ScoreCardManager : MonoBehaviour
 {
-    private Realm realm;
-    private VisualElement root;
-    private Label scoreCardHeader;
-    private string username;
-    private Stat currentStat;
+    private static Realm realm;
+    private static VisualElement root;
+    private static Label scoreCardHeader;
+    private static string username;
+    private static Stat currentStat;
 
-    private PropertyChangedEventHandler propertyHandler;
-
-    private RealmController realmController = default;
-
-    private void Awake()
-    {
-        realmController = FindObjectOfType<RealmController>();
-    }
+    private static PropertyChangedEventHandler propertyHandler;
 
     void Start()
     {
@@ -28,15 +21,15 @@ public class ScoreCardManager : MonoBehaviour
 
     // setLoggedInUser() is a method that sets values that are displayed in the ScoreCard UI, such as the username and current Stat,
     // and calls WatchForChangesToCurrentStats to watch for changes to the current Stat object
-    public void setLoggedInUser(string loggedInUser)
+    public static void setLoggedInUser(string loggedInUser)
     {
         username = loggedInUser;
-        currentStat = realmController.currentStat;
+        currentStat = RealmController.currentStat;
         updateCurrentStats(); // set initial stats
         WatchForChangesToCurrentStats();
     }
     // updateCurrentStats() is a method that updates the EnemiesDefeated,TokensCollected, and Score in the UI
-    public void updateCurrentStats() // updates stats in UI
+    public static void updateCurrentStats() // updates stats in UI
     {
         scoreCardHeader.text = username + "\n" +
         "Enemies Defeated: " + currentStat.EnemiesDefeated + "\n" +
@@ -45,7 +38,7 @@ public class ScoreCardManager : MonoBehaviour
     }
 
     // WatchForChangesToCurrentStats() is a method that defines a property handler on the current playthrough Stat object
-    public void WatchForChangesToCurrentStats()
+    public static void WatchForChangesToCurrentStats()
     {
         // create a listener that responds to changes to the particular stats for this run/playthrough
         propertyHandler = new PropertyChangedEventHandler((sender, e) => updateCurrentStats());
@@ -53,7 +46,7 @@ public class ScoreCardManager : MonoBehaviour
     }
     // UnRegisterListener() is a method that removes a property handler on the current playthrough Stat object
     // and resets the ScoreCard UI to it's initial values
-    public void UnRegisterListener()
+    public static void UnRegisterListener()
     {
         // unregister when the player has lost
         currentStat.PropertyChanged -= propertyHandler;
@@ -65,7 +58,7 @@ public class ScoreCardManager : MonoBehaviour
     }
     // SetCurrentStat() is a method that sets the current playthrough Stat object
     // and calls updateCurrentStats() to update the UI
-    public void SetCurrentStat(Stat newStat)
+    public static void SetCurrentStat(Stat newStat)
     {
         // called when the game has reset
         currentStat = newStat;
