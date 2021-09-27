@@ -1,7 +1,7 @@
-
 using System;
 using MongoDB.Bson;
 using Realms;
+
 public class Stat : RealmObject
 {
     [MapTo("_id")]

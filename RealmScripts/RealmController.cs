@@ -3,8 +3,7 @@ using Realms;
 using System.Threading.Tasks;
 using Realms.Sync;
 using UnityEngine.SceneManagement;
-using MongoDB.Bson;
-using System.Linq;
+
 public class RealmController : MonoBehaviour
 {
     public static RealmController Instance;

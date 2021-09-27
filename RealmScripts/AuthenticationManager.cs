@@ -5,11 +5,9 @@ using UnityEngine.UIElements;
 public class AuthenticationManager : MonoBehaviour
 {
     private VisualElement root;
-    private VisualElement authWrapper;
     private Label subtitle;
     private Button startButton;
     private Button logoutButton;
-    private string loggedInUser;
     private TextField userInput;
 
     private bool isInRegistrationMode = false; // (Part 2 Sync): isInRegistrationMode is used to toggle between authentication modes
@@ -63,7 +61,6 @@ public class AuthenticationManager : MonoBehaviour
     private void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
-        authWrapper = root.Q<VisualElement>("auth-wrapper");
         logoutButton = root.Q<Button>("logout-button");
         subtitle = root.Q<Label>("subtitle");
         startButton = root.Q<Button>("start-button");

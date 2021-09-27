@@ -6,6 +6,7 @@ using Realms;
 using System.Linq;
 using Realms.Sync;
 using System.Threading.Tasks;
+
 public class LeaderboardManager : MonoBehaviour
 {
     private Realm realm;

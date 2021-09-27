@@ -1,11 +1,9 @@
-using Realms;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.ComponentModel;
 
 public class ScoreCardManager : MonoBehaviour
 {
-    private Realm realm;
     private VisualElement root;
     private Label scoreCardHeader;
     private string username;
