@@ -26,7 +26,7 @@ public class LeaderboardManager : MonoBehaviour
     // setLoggedInUser() is an asynchronous method that opens a realm, calls the createLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
     // and calls setStatListener() to start listening for changes to all Stat objects in order to update the global leaderboard
     // setLoggedInUser()  takes a userInput, representing a username, as a parameter
-    public async void setLoggedInUser(string userInput)
+    public async void SetLoggedInUser(string userInput)
     {
         username = userInput;
 
@@ -36,15 +36,15 @@ public class LeaderboardManager : MonoBehaviour
         if (isLeaderboardUICreated == false)
         {
             root = GetComponent<UIDocument>().rootVisualElement;
-            createLeaderboardUI();
+            CreateLeaderboardUI();
             root.Add(displayTitle);
             root.Add(listView);
             isLeaderboardUICreated = true;
         }
-        setStatListener();
+        SetStatListener();
     }
     // getRealmPlayerTopStat() is a method that queries a realm for the player's Stat object with the highest score
-    private int getRealmPlayerTopStat()
+    private int GetRealmPlayerTopStat()
     {
         var realmPlayer = realm.All<Player>().Where(p => p.Name == username).First();
         var realmPlayerTopStat = realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
@@ -53,7 +53,7 @@ public class LeaderboardManager : MonoBehaviour
     // createLeaderboardUI() is a method that creates a Leaderboard title for
     // the UI and calls createTopStatListView() to create a list of Stat objects
     // with high scores
-    private void createLeaderboardUI()
+    private void CreateLeaderboardUI()
     {
         // create leaderboard title
         displayTitle = new Label();
@@ -61,10 +61,10 @@ public class LeaderboardManager : MonoBehaviour
         displayTitle.AddToClassList("display-title");
 
         topStats = realm.All<Stat>().OrderByDescending(s => s.Score).ToList();
-        createTopStatListView();
+        CreateTopStatListView();
     }
     // createTopStatListView() is a method that creates a set of Labels containing high stats
-    private void createTopStatListView()
+    private void CreateTopStatListView()
     {
         int maximumAmountOfTopStats;
         // set the maximumAmountOfTopStats to 5 or less
@@ -80,7 +80,7 @@ public class LeaderboardManager : MonoBehaviour
 
         var topStatsListItems = new List<string>();
 
-        topStatsListItems.Add("Your top points: " + getRealmPlayerTopStat());
+        topStatsListItems.Add("Your top points: " + GetRealmPlayerTopStat());
 
 
         for (int i = 0; i < maximumAmountOfTopStats; i++)
@@ -111,7 +111,7 @@ public class LeaderboardManager : MonoBehaviour
 
     }
     // setStatListener is a method that sets a listener on all Stat objects, and calls setNewlyInsertedScores if one has been inserted
-    private void setStatListener()
+    private void SetStatListener()
     {
 
         // Observe collection notifications. Retain the token to keep observing.
@@ -128,7 +128,7 @@ public class LeaderboardManager : MonoBehaviour
 
                 if (changes != null)
                 {
-                    setNewlyInsertedScores(changes.InsertedIndices);
+                    SetNewlyInsertedScores(changes.InsertedIndices);
                 }
                 // we only need to check for inserted Stat objects because Stat objects can't be modified or deleted after the playthrough is complete
 
@@ -137,7 +137,7 @@ public class LeaderboardManager : MonoBehaviour
 
     // setNewlyInsertedScores() is a method that determine if a new Stat is greater than any existing topStats, and if it is, inserts it into the topStats list in descending order
     // setNewlyInsertedScores() takes an array of insertedIndices
-    private void setNewlyInsertedScores(int[] insertedIndices)
+    private void SetNewlyInsertedScores(int[] insertedIndices)
     {
         foreach (var i in insertedIndices)
         {
@@ -153,7 +153,7 @@ public class LeaderboardManager : MonoBehaviour
                     }
                     topStats.Insert(scoreIndex, newStat);
                     root.Remove(listView); // remove the old listView
-                    createTopStatListView(); // create a new listView
+                    CreateTopStatListView(); // create a new listView
                     root.Add(listView); // add the new listView to the UI
                     break;
                 }

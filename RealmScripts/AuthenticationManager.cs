@@ -36,11 +36,11 @@ public class AuthenticationManager : MonoBehaviour
         {
             if (isInRegistrationMode == true)
             {
-                onPressRegister();
+                OnPressRegister();
             }
             else
             {
-                onPressLogin();
+                OnPressLogin();
             }
         };
         toggleLoginOrRegisterUIButton = root.Q<Button>("toggle-login-or-register-ui-button");
@@ -49,26 +49,26 @@ public class AuthenticationManager : MonoBehaviour
             // if already in registration mode, switch to the login mode and set isInRegistrationMode to false
             if (isInRegistrationMode == true)
             {
-                switchToLoginUI();
+                SwitchToLoginUI();
                 isInRegistrationMode = false;
             }
             else
             {
-                switchToRegisterUI();
+                SwitchToRegisterUI();
                 isInRegistrationMode = true;
             }
         };
     }
 
     // switchToLoginUI() is a method that switches the UI to the Login UI mode
-    private void switchToLoginUI()
+    private void SwitchToLoginUI()
     {
         subtitle.text = "Login";
         startButton.text = "Login & Start Game";
         toggleLoginOrRegisterUIButton.text = "Don't have an account yet? Register";
     }
     // switchToRegisterUI() is a method that switches the UI to the Register UI mode
-    private void switchToRegisterUI()
+    private void SwitchToRegisterUI()
     {
         subtitle.text = "Register";
         startButton.text = "Signup & Start Game";
@@ -79,17 +79,17 @@ public class AuthenticationManager : MonoBehaviour
 
     // onPressLogin() is an asynchronous method that calls RealmController.setLoggedInUser to login with the values from the userInput and passInput
     // and passes the currentPlayer to ScoreCardManager and LeaderboardManager; once logged in the login screen is hidden and the logout button is shown
-    private async void onPressLogin()
+    private async void OnPressLogin()
     {
         try
         {
-            var currentPlayer = await FindObjectOfType<RealmController>().setLoggedInUser(userInput.value, passInput.value);
+            var currentPlayer = await FindObjectOfType<RealmController>().SetLoggedInUser(userInput.value, passInput.value);
             if (currentPlayer != null)
             {
                 root.AddToClassList("hide");
             }
-            FindObjectOfType<ScoreCardManager>().setLoggedInUser(currentPlayer.Name);
-            FindObjectOfType<LeaderboardManager>().setLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<ScoreCardManager>().SetLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<LeaderboardManager>().SetLoggedInUser(currentPlayer.Name);
         }
         catch (Exception ex)
         {
@@ -98,7 +98,7 @@ public class AuthenticationManager : MonoBehaviour
     }
     // onPressRegister() is a method that passes RealmController.OnPressRegister() the
     // values of the userInput and  passInput TextFields in order to register a user
-    private async void onPressRegister()
+    private async void OnPressRegister()
     {
         try
         {
@@ -108,8 +108,8 @@ public class AuthenticationManager : MonoBehaviour
             {
                 root.AddToClassList("hide");
             }
-            FindObjectOfType<ScoreCardManager>().setLoggedInUser(currentPlayer.Name);
-            FindObjectOfType<LeaderboardManager>().setLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<ScoreCardManager>().SetLoggedInUser(currentPlayer.Name);
+            FindObjectOfType<LeaderboardManager>().SetLoggedInUser(currentPlayer.Name);
 
         }
         catch (Exception ex)

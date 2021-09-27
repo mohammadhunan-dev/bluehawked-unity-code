@@ -50,7 +50,7 @@ public class RealmController : MonoBehaviour
     // setLoggedInUser() is an asynchronous method that logs in as a Realms.Sync.User, creates a new Stat object for the current playthrough
     // and returns the Player object that corresponds to the logged in Realms.Sync.User
     // setLoggedInUser() takes a userInput and passInput, representing a username/password, as a parameter
-    public async Task<Player> setLoggedInUser(string userInput, string passInput)
+    public async Task<Player> SetLoggedInUser(string userInput, string passInput)
     {
         syncUser = await realmApp.LogInAsync(Credentials.EmailPassword(userInput, passInput));
         if (syncUser != null)
@@ -66,7 +66,7 @@ public class RealmController : MonoBehaviour
                     currentStat = realm.Add(s1);
                     currentPlayer.Stats.Add(currentStat);
                 });
-                startGame();
+                StartGame();
             }
             else
             {
@@ -95,7 +95,7 @@ public class RealmController : MonoBehaviour
             currentStat = realm.Add(s1);
             currentPlayer.Stats.Add(currentStat);
         });
-        startGame();
+        StartGame();
         return currentPlayer;
     }
 
@@ -109,7 +109,7 @@ public class RealmController : MonoBehaviour
 
 
     // startGame() is a method that records how long the player has been playing during the current playthrough (i.e since logging in or since last losing or winning)
-    private void startGame()
+    private void StartGame()
     {
         // execute a timer every 10 second
         var myTimer = new System.Timers.Timer(10000);
@@ -118,7 +118,7 @@ public class RealmController : MonoBehaviour
     }
 
     // collectToken() is a method that performs a write transaction to update the current playthrough Stat object's TokensCollected count
-    public void collectToken()
+    public void CollectToken()
     {
         realm.Write(() =>
         {
@@ -126,7 +126,7 @@ public class RealmController : MonoBehaviour
         });
     }
     // defeatEnemy() is a method that performs a write transaction to update the current playthrough Stat object's enemiesDefeated count
-    public void defeatEnemy()
+    public void DefeatEnemy()
     {
         realm.Write(() =>
         {
@@ -135,7 +135,7 @@ public class RealmController : MonoBehaviour
     }
 
     // deleteCurrentStat() is a method that performs a write transaction to delete the current playthrough Stat object and remove it from the current Player object's Stats' list
-    public void deleteCurrentStat()
+    public void DeleteCurrentStat()
     {
         FindObjectOfType<ScoreCardManager>().UnRegisterListener();
         realm.Write(() =>
@@ -145,7 +145,7 @@ public class RealmController : MonoBehaviour
         });
     }
     // restartGame() is a method that creates a new plathrough Stat object and shares this new Stat object with the ScoreCardManager to update in the UI and listen for changes to it
-    public void restartGame()
+    public void RestartGame()
     {
         var s1 = new Stat();
         s1.StatOwner = currentPlayer;
@@ -158,12 +158,12 @@ public class RealmController : MonoBehaviour
         FindObjectOfType<ScoreCardManager>().SetCurrentStat(currentStat); // call `SetCurrentStat()` to set the current stat in the UI using ScoreCardManager
         FindObjectOfType<ScoreCardManager>().WatchForChangesToCurrentStats(); // call `WatchForChangesToCurrentStats()` to register a listener on the new score in the ScoreCardManager
 
-        startGame(); // start the game by resetting the timer and officially starting a new run/playthrough
+        StartGame(); // start the game by resetting the timer and officially starting a new run/playthrough
     }
 
 
     // playerWon() is a method that calculates and returns the final score for the current playthrough once the player has won the game
-    public int playerWon()
+    public int PlayerWon()
     {
         if (runTime <= 30) // if the game is beat in in less than or equal to 30 seconds, +80 bonus points
         {

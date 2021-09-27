@@ -21,15 +21,15 @@ public class ScoreCardManager : MonoBehaviour
 
     // setLoggedInUser() is a method that sets values that are displayed in the ScoreCard UI, such as the username and current Stat,
     // and calls WatchForChangesToCurrentStats to watch for changes to the current Stat object
-    public void setLoggedInUser(string loggedInUser)
+    public void SetLoggedInUser(string loggedInUser)
     {
         username = loggedInUser;
         currentStat = FindObjectOfType<RealmController>().currentStat;
-        updateCurrentStats(); // set initial stats
+        UpdateCurrentStats(); // set initial stats
         WatchForChangesToCurrentStats();
     }
     // updateCurrentStats() is a method that updates the EnemiesDefeated,TokensCollected, and Score in the UI
-    public void updateCurrentStats() // updates stats in UI
+    public void UpdateCurrentStats() // updates stats in UI
     {
         scoreCardHeader.text = username + "\n" +
         "Enemies Defeated: " + currentStat.EnemiesDefeated + "\n" +
@@ -41,7 +41,7 @@ public class ScoreCardManager : MonoBehaviour
     public void WatchForChangesToCurrentStats()
     {
         // create a listener that responds to changes to the particular stats for this run/playthrough
-        propertyHandler = new PropertyChangedEventHandler((sender, e) => updateCurrentStats());
+        propertyHandler = new PropertyChangedEventHandler((sender, e) => UpdateCurrentStats());
         currentStat.PropertyChanged += propertyHandler;
     }
     // UnRegisterListener() is a method that removes a property handler on the current playthrough Stat object
@@ -62,6 +62,6 @@ public class ScoreCardManager : MonoBehaviour
     {
         // called when the game has reset
         currentStat = newStat;
-        updateCurrentStats();
+        UpdateCurrentStats();
     }
 }
