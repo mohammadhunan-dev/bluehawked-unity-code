@@ -85,56 +85,72 @@ public class RealmController : MonoBehaviour
         GenerateUIObjects(canvasGameObject, "ScoreCard");
     }
 
-    // GetRealm() is a method that returns a realm instance
-    private static Realm GetRealm()
+    // GetRealm() is an asynchronous method that returns a synced realm
+    // GetRealm() takes a logged in Realms.Sync.User as a parameter
+    private static async Task<Realm> GetRealm(User loggedInUser)
     {
-        return Realm.GetInstance();
+        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", loggedInUser);
+        return await Realm.GetInstanceAsync(syncConfiguration);
     }
 
-    // setLoggedInUser() is a method that finds a Player object and creates a new Stat object for the current playthrough
-    // setLoggedInUser() takes a userInput, representing a username, as a parameter
-    public static void setLoggedInUser(string userInput)
+
+    // setLoggedInUser() is an asynchronous method that logs in as a Realms.Sync.User, creates a new Stat object for the current playthrough
+    // and returns the Player object that corresponds to the logged in Realms.Sync.User
+    // setLoggedInUser() takes a userInput and passInput, representing a username/password, as a parameter
+    public static async Task<Player> setLoggedInUser(string userInput, string passInput)
     {
-        realm = GetRealm();
-        var matchedPlayers = realm.All<Player>().Where(p => p.Name == userInput);
-
-        if (matchedPlayers.Count() > 0) // if the player exists
+        syncUser = await realmApp.LogInAsync(Credentials.EmailPassword(userInput, passInput));
+        if (syncUser != null)
         {
-            currentPlayer = matchedPlayers.First();
-            var stat = new Stat();
-            stat.StatOwner = currentPlayer;
-
-            realm.Write(() =>
+            realm = await GetRealm(syncUser);
+            currentPlayer = realm.Find<Player>(syncUser.Id);
+            if (currentPlayer != null)
             {
-                currentStat = realm.Add(stat);
-                currentPlayer.Stats.Add(currentStat);
-            });
+                var stat = new Stat();
+                stat.StatOwner = currentPlayer;
+                realm.Write(() =>
+                {
+                    currentStat = realm.Add(stat);
+                    currentPlayer.Stats.Add(currentStat);
+                });
+                startGame();
+            }
+            else
+            {
+                Debug.Log("This player exists a MongoDB Realm User but not as a Realm Object, please delete the MongoDB Realm User and create one using the Game rather than MongoDB Atlas or Realm Studio");
+            }
         }
-        else
+        return currentPlayer;
+    }
+
+    // OnPressRegister() is an asynchronous method that registers as a Realms.Sync.User, creates a new Player and Stat object 
+    // OnPressRegister takes a userInput and passInput, representing a username/password, as a parameter
+    public static async Task<Player> OnPressRegister(string userInput, string passInput)
+    {
+        await realmApp.EmailPasswordAuth.RegisterUserAsync(userInput, passInput);
+        syncUser = await realmApp.LogInAsync(Credentials.EmailPassword(userInput, passInput));
+        realm = await GetRealm(syncUser);
+
+        var player = new Player();
+        player.Id = syncUser.Id;
+        player.Name = userInput;
+        var stat = new Stat();
+        stat.StatOwner = player;
+        realm.Write(() =>
         {
-            var player = new Player();
-            player.Id = ObjectId.GenerateNewId().ToString();
-            player.Name = userInput;
-
-            var stat = new Stat();
-            stat.StatOwner = player;
-
-            realm.Write(() =>
-            {
-                currentPlayer = realm.Add(player);
-                currentStat = realm.Add(stat);
-                currentPlayer.Stats.Add(currentStat);
-            });
-        }
+            currentPlayer = realm.Add(player);
+            currentStat = realm.Add(stat);
+            currentPlayer.Stats.Add(currentStat);
+        });
         startGame();
+        return currentPlayer;
     }
-
-
 
 
     // LogOut() is an asynchronous method that logs out and reloads the scene
     public static async void LogOut()
     {
+        await syncUser.LogOutAsync();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
