@@ -130,7 +130,7 @@ public class RealmController : MonoBehaviour
     // defeatEnemy() is a method that performs a write transaction to update the current playthrough Stat object's enemiesDefeated count
     public static void defeatEnemy()
     {
-        // TODO: within a write transaction, increment the number of enemies's defeated in the current playthrough/run's stat
+        // TODO: within a write transaction, increment the number of enemies defeated in the current playthrough/run's stat
     }
 
     // deleteCurrentStat() is a method that performs a write transaction to delete the current playthrough Stat object and remove it from the current Player object's Stats' list
