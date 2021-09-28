@@ -21,20 +21,13 @@ public class LeaderboardManager : MonoBehaviour
     {
         Instance = this;
     }
-    // GetRealm() is an asynchronous method that returns a synced realm
-    private static async Task<Realm> GetRealm()
-    {
-        var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", RealmController.syncUser);
-        return await Realm.GetInstanceAsync(syncConfiguration);
-    }
-    // setLoggedInUser() is an asynchronous method that opens a realm, calls the createLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
-    // and calls setStatListener() to start listening for changes to all Stat objects in order to update the global leaderboard
+    // setLoggedInUser() is a method that opens a realm, calls the createLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
     // setLoggedInUser()  takes a userInput, representing a username, as a parameter
-    public async void setLoggedInUser(string userInput)
+    public void setLoggedInUser(string userInput)
     {
         username = userInput;
 
-        realm = await GetRealm();
+        realm = Realm.GetInstance();
 
         // only create the leaderboard on the first run, consecutive restarts/reruns will already have a leaderboard created
         if (isLeaderboardUICreated == false)
@@ -45,7 +38,6 @@ public class LeaderboardManager : MonoBehaviour
             root.Add(listView);
             isLeaderboardUICreated = true;
         }
-        setStatListener();
     }
     // getRealmPlayerTopStat() is a method that queries a realm for the player's Stat object with the highest score
     private int getRealmPlayerTopStat()
@@ -114,61 +106,8 @@ public class LeaderboardManager : MonoBehaviour
         listView.AddToClassList("list-view");
 
     }
-    // setStatListener is a method that sets a listener on all Stat objects, and calls setNewlyInsertedScores if one has been inserted
-    private void setStatListener()
-    {
 
-        // Observe collection notifications. Retain the token to keep observing.
-        listenerToken = realm.All<Stat>()
-            .SubscribeForNotifications((sender, changes, error) =>
-            {
-
-                if (error != null)
-                {
-                    // Show error message
-                    Debug.Log("an error occurred while listening for score changes :" + error);
-                    return;
-                }
-
-                if (changes != null)
-                {
-                    setNewlyInsertedScores(changes.InsertedIndices);
-                }
-                // we only need to check for inserted Stat objects because Stat objects can't be modified or deleted after the playthrough is complete
-
-            });
-    }
-
-    // setNewlyInsertedScores() is a method that determine if a new Stat is greater than any existing topStats, and if it is, inserts it into the topStats list in descending order
-    // setNewlyInsertedScores() takes an array of insertedIndices
-    private void setNewlyInsertedScores(int[] insertedIndices)
-    {
-        foreach (var i in insertedIndices)
-        {
-            var newStat = realm.All<Stat>().ElementAt(i);
-
-            for (var scoreIndex = 0; scoreIndex < topStats.Count; scoreIndex++)
-            {
-                if (topStats.ElementAt(scoreIndex).Score < newStat.Score)
-                {
-                    if (topStats.Count > 4)
-                    {   // An item shouldn't be removed if the leaderboard has less than 5 items
-                        topStats.RemoveAt(topStats.Count - 1);
-                    }
-                    topStats.Insert(scoreIndex, newStat);
-                    root.Remove(listView); // remove the old listView
-                    createTopStatListView(); // create a new listView
-                    root.Add(listView); // add the new listView to the UI
-                    break;
-                }
-            }
-        }
-    }
     void OnDisable()
     {
-        if (listenerToken != null)
-        {
-            listenerToken.Dispose();
-        }
     }
 }
