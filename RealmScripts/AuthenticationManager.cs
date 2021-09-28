@@ -41,7 +41,8 @@ public class AuthenticationManager : MonoBehaviour
     {
         try
         {
-            root.AddToClassList("hide");
+            authWrapper.AddToClassList("hide");
+            logoutButton.AddToClassList("show");
             loggedInUser = userInput.value;
             RealmController.setLoggedInUser(loggedInUser);
             ScoreCardManager.setLoggedInUser(loggedInUser);
