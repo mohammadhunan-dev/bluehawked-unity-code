@@ -138,7 +138,7 @@ public class RealmController : MonoBehaviour
     public static void deleteCurrentStat()
     {
         ScoreCardManager.UnRegisterListener();
-        // TODO: within a write transaction, delete the current Stat object, and it's reference in the current Player object
+        // TODO: within a write transaction, delete the current Stat object, and its reference in the current Player object
     }
     // restartGame() is a method that creates a new plathrough Stat object and shares this new Stat object with the ScoreCardManager to update in the UI and listen for changes to it
     public static void restartGame()
@@ -161,19 +161,19 @@ public class RealmController : MonoBehaviour
     // playerWon() is a method that calculates and returns the final score for the current playthrough once the player has won the game
     public static int playerWon()
     {
-        if (runTime <= 30) // if the game is beat in in less than or equal to 30 seconds, +80 bonus points
+        if (runTime <= 30) // if the game is won in less than or equal to 30 seconds, +80 bonus points
         {
             bonusPoints = 80;
         }
-        else if (runTime <= 60) // if the game is beat in in less than or equal to 1 min, +70 bonus points
+        else if (runTime <= 60) // if the game is won in less than or equal to 1 min, +70 bonus points
         {
             bonusPoints = 70;
         }
-        else if (runTime <= 90) // if the game is beat in less than or equal to 1 min 30 seconds, +60 bonus points
+        else if (runTime <= 90) // if the game is won in less than or equal to 1 min 30 seconds, +60 bonus points
         {
             bonusPoints = 60;
         }
-        else if (runTime <= 120) // if the game is beat in less than or equal to 2 mins, +50 bonus points
+        else if (runTime <= 120) // if the game is won in less than or equal to 2 mins, +50 bonus points
         {
             bonusPoints = 50;
         }
