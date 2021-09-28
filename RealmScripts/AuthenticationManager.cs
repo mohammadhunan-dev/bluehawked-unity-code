@@ -19,7 +19,7 @@ public class AuthenticationManager : MonoBehaviour
 
     // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
     // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
-    void Start()
+    private void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
         authWrapper = root.Q<VisualElement>("auth-wrapper");
