@@ -118,7 +118,7 @@ public class LeaderboardManager : MonoBehaviour
     {
         Instance = this;
     }
-    void OnDisable()
+    private void OnDisable()
     {
     }
 
