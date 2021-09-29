@@ -17,13 +17,11 @@ public class LeaderboardManager : MonoBehaviour
     private bool isLeaderboardUICreated = false;
     private List<Stat> topStats;
     private IDisposable listenerToken;  // (Part 2 Sync): listenerToken is the token for registering a change listener on all Stat objects
-    private void Awake()
-    {
-        Instance = this;
-    }
-    // setLoggedInUser() is a method that opens a realm, calls the createLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
-    // setLoggedInUser()  takes a userInput, representing a username, as a parameter
-    public void setLoggedInUser(string userInput)
+
+    #region PublicMethods
+    // SetLoggedInUser() is a method that opens a realm, calls the CreateLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
+    // SetLoggedInUser()  takes a userInput, representing a username, as a parameter
+    public void SetLoggedInUser(string userInput)
     {
         username = userInput;
 
@@ -33,23 +31,19 @@ public class LeaderboardManager : MonoBehaviour
         if (isLeaderboardUICreated == false)
         {
             root = GetComponent<UIDocument>().rootVisualElement;
-            createLeaderboardUI();
+            CreateLeaderboardUI();
             root.Add(displayTitle);
             root.Add(listView);
             isLeaderboardUICreated = true;
         }
     }
-    // getRealmPlayerTopStat() is a method that queries a realm for the player's Stat object with the highest score
-    private int getRealmPlayerTopStat()
-    {
-        var realmPlayer = realm.All<Player>().Where(p => p.Name == username).First();
-        var realmPlayerTopStat = realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
-        return realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
-    }
-    // createLeaderboardUI() is a method that creates a Leaderboard title for
-    // the UI and calls createTopStatListView() to create a list of Stat objects
+    #endregion
+
+    #region PrivateMethods
+    // CreateLeaderboardUI() is a method that creates a Leaderboard title for
+    // the UI and calls CreateTopStatListView() to create a list of Stat objects
     // with high scores
-    private void createLeaderboardUI()
+    private void CreateLeaderboardUI()
     {
         // create leaderboard title
         displayTitle = new Label();
@@ -57,10 +51,11 @@ public class LeaderboardManager : MonoBehaviour
         displayTitle.AddToClassList("display-title");
 
         topStats = realm.All<Stat>().OrderByDescending(s => s.Score).ToList();
-        createTopStatListView();
+        CreateTopStatListView();
     }
-    // createTopStatListView() is a method that creates a set of Labels containing high stats
-    private void createTopStatListView()
+
+    // CreateTopStatListView() is a method that creates a set of Labels containing high stats
+    private void CreateTopStatListView()
     {
         int maximumAmountOfTopStats;
         // set the maximumAmountOfTopStats to 5 or less
@@ -76,7 +71,7 @@ public class LeaderboardManager : MonoBehaviour
 
         var topStatsListItems = new List<string>();
 
-        topStatsListItems.Add("Your top points: " + getRealmPlayerTopStat());
+        topStatsListItems.Add("Your top points: " + GetRealmPlayerTopStat());
 
 
         for (int i = 0; i < maximumAmountOfTopStats; i++)
@@ -104,10 +99,38 @@ public class LeaderboardManager : MonoBehaviour
 
         listView = new ListView(topStatsListItems, itemHeight, makeItem, bindItem);
         listView.AddToClassList("list-view");
-
     }
 
+    // GetRealmPlayerTopStat() is a method that queries a realm for the player's Stat object with the highest score
+    private int GetRealmPlayerTopStat()
+    {
+        var realmPlayer = realm.All<Player>().Where(p => p.Name == username).First();
+        var realmPlayerTopStat = realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
+        return realmPlayer.Stats.OrderByDescending(s => s.Score).First().Score;
+    }
+
+
+
+    #endregion
+
+    #region UnityLifecycleMethods
+    private void Awake()
+    {
+        Instance = this;
+    }
     void OnDisable()
     {
     }
+
+    #endregion
+
+
+
+
+
+
+
+
+
+
 }
