@@ -18,9 +18,9 @@ public class ScoreCardManager : MonoBehaviour
         scoreCardHeader = root.Q<Label>("score-card-header");
     }
 
-    // setLoggedInUser() is a method that sets values that are displayed in the ScoreCard UI, such as the username and current Stat,
+    // SetLoggedInUser() is a method that sets values that are displayed in the ScoreCard UI, such as the username and current Stat,
     // and calls WatchForChangesToCurrentStats to watch for changes to the current Stat object
-    public static void setLoggedInUser(string loggedInUser)
+    public static void SetLoggedInUser(string loggedInUser)
     {
         username = loggedInUser;
         currentStat = RealmController.currentStat;
