@@ -18,19 +18,23 @@ public class AuthenticationManager : MonoBehaviour
     private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
 
     #region PrivateMethods
-    // OnPressLogin() is an asynchronous method that calls
+    private static void HideAuthenticationUI()
+    {
+        authWrapper.AddToClassList("hide");
+        logoutButton.AddToClassList("show");
+    }
+    // OnPressLoginWithBackend() is an asynchronous method that calls
     // RealmController.SetLoggedInUser to login and passes the currentPlayer to
     // ScoreCardManager and LeaderboardManager; once logged in the login screen
     // is hidden and the logout button is shown
-    private static async void OnPressLogin()
+    private static async void OnPressLoginWithBackend()
     {
         try
         {
             var currentPlayer = await RealmController.SetLoggedInUser(userInput.value, passInput.value);
             if (currentPlayer != null)
             {
-                authWrapper.AddToClassList("hide");
-                logoutButton.AddToClassList("show");
+                HideAuthenticationUI();
             }
             ScoreCardManager.SetLoggedInUser(currentPlayer.Name);
             LeaderboardManager.Instance.SetLoggedInUser(currentPlayer.Name);
@@ -106,7 +110,7 @@ public class AuthenticationManager : MonoBehaviour
             }
             else
             {
-                OnPressLogin();
+                OnPressLoginWithBackend();
             }
         };
         toggleLoginOrRegisterUIButton = root.Q<Button>("toggle-login-or-register-ui-button");
