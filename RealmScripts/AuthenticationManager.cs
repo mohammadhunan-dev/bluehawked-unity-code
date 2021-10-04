@@ -18,6 +18,11 @@ public class AuthenticationManager : MonoBehaviour
     private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
 
     #region PrivateMethods
+    private static void HideAuthenticationUI()
+    {
+        authWrapper.AddToClassList("hide");
+        logoutButton.AddToClassList("show");
+    }
 
     // OnPressLogin() is a method that passes the username to the
     // RealmController, ScoreCardManager, and LeaderboardManager
@@ -25,8 +30,7 @@ public class AuthenticationManager : MonoBehaviour
     {
         try
         {
-            authWrapper.AddToClassList("hide");
-            logoutButton.AddToClassList("show");
+            HideAuthenticationUI();
             loggedInUser = userInput.value;
             RealmController.SetLoggedInUser(loggedInUser);
             ScoreCardManager.SetLoggedInUser(loggedInUser);
