@@ -12,10 +12,15 @@ public class AuthenticationManager : MonoBehaviour
     private static Button logoutButton;
     private static string loggedInUser;
     private static TextField userInput;
+    // (Part 2 Sync): isInRegistrationMode is used to toggle between
+    // authentication modes
+    private static bool isInRegistrationMode = false;
+    // (Part 2 Sync): passInput represents the password input
+    private static TextField passInput;
 
-    private static bool isInRegistrationMode = false; // (Part 2 Sync): isInRegistrationMode is used to toggle between authentication modes
-    private static TextField passInput; // (Part 2 Sync): passInput represents the password input
-    private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
+    // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle
+    // between login or registration modes
+    private static Button toggleLoginOrRegisterUIButton;
 
     #region PrivateMethods
     private static void HideAuthenticationUI()
@@ -23,6 +28,8 @@ public class AuthenticationManager : MonoBehaviour
         authWrapper.AddToClassList("hide");
         logoutButton.AddToClassList("show");
     }
+
+
     // OnPressLoginWithBackend() is an asynchronous method that calls
     // RealmController.SetLoggedInUser to login and passes the currentPlayer to
     // ScoreCardManager and LeaderboardManager; once logged in the login screen
@@ -44,8 +51,8 @@ public class AuthenticationManager : MonoBehaviour
             Debug.Log("an exception was thrown:" + ex.Message);
         }
     }
-    // OnPressRegister() is a method that passes RealmController.OnPressRegister() the
-    // values of the userInput and  passInput TextFields in order to register a user
+    // OnPressRegister() passes RealmController.OnPressRegister() the values of
+    // the userInput and  passInput TextFields in order to register a user
     private static async void OnPressRegister()
     {
         try
@@ -67,15 +74,14 @@ public class AuthenticationManager : MonoBehaviour
         }
     }
 
-
-    // SwitchToLoginUI() is a method that switches the UI to the Login UI mode
+    // SwitchToLoginUI() switches the UI to the Login UI mode
     private static void SwitchToLoginUI()
     {
         subtitle.text = "Login";
         startButton.text = "Login & Start Game";
         toggleLoginOrRegisterUIButton.text = "Don't have an account yet? Register";
     }
-    // SwitchToRegisterUI() is a method that switches the UI to the Register UI mode
+    // SwitchToRegisterUI() switches the UI to the Register UI mode
     private static void SwitchToRegisterUI()
     {
         subtitle.text = "Register";
@@ -85,9 +91,9 @@ public class AuthenticationManager : MonoBehaviour
     #endregion
 
     #region UnityLifecycleMethods
-    // Start() is a method inherited from MonoBehavior and is called on the
-    // frame when a script is enabled Start() defines AuthenticationScreen UI
-    // elements, and sets click event handlers for them
+    // Start() is inherited from MonoBehavior and is called on the frame when a
+    // script is enabled Start() defines AuthenticationScreen UI elements, and
+    // sets click event handlers for them
     private void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -97,8 +103,7 @@ public class AuthenticationManager : MonoBehaviour
         logoutButton = root.Q<Button>("logout-button");
         userInput = root.Q<TextField>("username-input");
 
-        logoutButton.clicked += RealmController.LogOut;
-
+        logoutButton.clicked += RealmController.LogOutBackend;
         passInput = root.Q<TextField>("password-input");
         passInput.isPasswordField = true;
         //  when the start button is clicked, toggle between registration modes
@@ -116,7 +121,7 @@ public class AuthenticationManager : MonoBehaviour
         toggleLoginOrRegisterUIButton = root.Q<Button>("toggle-login-or-register-ui-button");
         toggleLoginOrRegisterUIButton.clicked += () =>
         {
-            // if already in registration mode, switch to the login mode and set isInRegistrationMode to false
+            // if in registration mode, swap to the login mode
             if (isInRegistrationMode == true)
             {
                 SwitchToLoginUI();

@@ -26,7 +26,8 @@ public class RealmController : MonoBehaviour
     public static User syncUser; // (Part 2 Sync): syncUser represents the realmApp's currently logged in user
 
     #region PublicMethods
-    // CollectToken() is a method that performs a write transaction to update the current playthrough Stat object's TokensCollected count
+    // CollectToken() performs a write transaction to update the current
+    // playthrough Stat object's TokensCollected count
     public static void CollectToken()
     {
         realm.Write(() =>
@@ -35,7 +36,8 @@ public class RealmController : MonoBehaviour
         });
     }
 
-    // DefeatEnemy() is a method that performs a write transaction to update the current playthrough Stat object's enemiesDefeated count
+    // DefeatEnemy() performs a write transaction to update the current
+    // playthrough Stat object's enemiesDefeated count
     public static void DefeatEnemy()
     {
         realm.Write(() =>
@@ -44,7 +46,9 @@ public class RealmController : MonoBehaviour
         });
     }
 
-    // DeleteCurrentStat() is a method that performs a write transaction to delete the current playthrough Stat object and remove it from the current Player object's Stats' list
+    // DeleteCurrentStat() performs a write transaction to delete the current
+    // playthrough Stat object and remove it from the current Player object's
+    // Stats' list
     public static void DeleteCurrentStat()
     {
         ScoreCardManager.UnRegisterListener();
@@ -55,15 +59,18 @@ public class RealmController : MonoBehaviour
         });
     }
 
-    // LogOut() is an asynchronous method that logs out and reloads the scene
-    public static async void LogOut()
+
+    // LogOutBackend() is an asynchronous method that logs out 
+    // the current MongoDB Realm User
+    public static async void LogOutBackend()
     {
         await syncUser.LogOutAsync();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // OnPressRegister() is an asynchronous method that registers as a Realms.Sync.User, creates a new Player and Stat object 
-    // OnPressRegister takes a userInput and passInput, representing a username/password, as a parameter
+    // OnPressRegister() is an asynchronous method that registers a user,
+    // creates a new Player and Stat object OnPressRegister takes a userInput
+    // and passInput, representing a username/password, as a parameter
     public static async Task<Player> OnPressRegister(string userInput, string passInput)
     {
         await realmApp.EmailPasswordAuth.RegisterUserAsync(userInput, passInput);
@@ -85,7 +92,8 @@ public class RealmController : MonoBehaviour
         return currentPlayer;
     }
 
-    // PlayerWon() is a method that calculates and returns the final score for the current playthrough once the player has won the game
+    // PlayerWon() calculates and returns the final score for the current
+    // playthrough once the player has won the game
     public static int PlayerWon()
     {
         if (runTime <= 30) // if the game is won in less than or equal to 30 seconds, +80 bonus points
@@ -114,7 +122,9 @@ public class RealmController : MonoBehaviour
         return finalScore;
     }
 
-    // RestartGame() is a method that creates a new plathrough Stat object and shares this new Stat object with the ScoreCardManager to update in the UI and listen for changes to it
+    // RestartGame() creates a new plathrough Stat object and shares this new
+    // Stat object with the ScoreCardManager to update in the UI and listen for
+    // changes to it
     public static void RestartGame()
     {
         var stat = new Stat();
@@ -209,7 +219,9 @@ public class RealmController : MonoBehaviour
         return await Realm.GetInstanceAsync(syncConfiguration);
     }
 
-    // StartGame() is a method that records how long the player has been playing during the current playthrough (i.e since logging in or since last losing or winning)
+    // StartGame() records how long the player has been playing during the
+    // current playthrough (i.e since logging in or since last losing or
+    // winning)
     private static void StartGame()
     {
         // execute a timer every 10 second
