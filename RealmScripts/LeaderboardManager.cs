@@ -19,15 +19,18 @@ public class LeaderboardManager : MonoBehaviour
     private IDisposable listenerToken;  // (Part 2 Sync): listenerToken is the token for registering a change listener on all Stat objects
 
     #region PublicMethods
-    // SetLoggedInUser() is a method that opens a realm, calls the CreateLeaderboardUI() method to create the LeaderboardUI and adds it to the Root Component
-    // SetLoggedInUser()  takes a userInput, representing a username, as a parameter
+    // SetLoggedInUser() opens a realm, calls the CreateLeaderboardUI() method
+    // to create the LeaderboardUI and adds it to the Root Component
+    // SetLoggedInUser()  takes a userInput, representing a username, as a
+    // parameter
     public void SetLoggedInUser(string userInput)
     {
         username = userInput;
 
         realm = Realm.GetInstance();
 
-        // only create the leaderboard on the first run, consecutive restarts/reruns will already have a leaderboard created
+        // only create the leaderboard on the first run, consecutive
+        // restarts/reruns will already have a leaderboard created
         if (isLeaderboardUICreated == false)
         {
             root = GetComponent<UIDocument>().rootVisualElement;
@@ -40,9 +43,8 @@ public class LeaderboardManager : MonoBehaviour
     #endregion
 
     #region PrivateMethods
-    // CreateLeaderboardUI() is a method that creates a Leaderboard title for
-    // the UI and calls CreateTopStatListView() to create a list of Stat objects
-    // with high scores
+    // CreateLeaderboardUI() creates a Leaderboard title for the UI and calls
+    // CreateTopStatListView() to create a list of Stat objects with high scores
     private void CreateLeaderboardUI()
     {
         // create leaderboard title
@@ -54,7 +56,7 @@ public class LeaderboardManager : MonoBehaviour
         CreateTopStatListView();
     }
 
-    // CreateTopStatListView() is a method that creates a set of Labels containing high stats
+    // CreateTopStatListView() creates a set of Labels containing high stats
     private void CreateTopStatListView()
     {
         int maximumAmountOfTopStats;
@@ -76,7 +78,9 @@ public class LeaderboardManager : MonoBehaviour
 
         for (int i = 0; i < maximumAmountOfTopStats; i++)
         {
-            if (topStats[i].Score > 1) // only display the top stats if they are greater than 0, and show no top stats if there are none greater than 0
+            // only display the top stats if they are greater than 0, and show
+            // no top stats if there are none greater than 0
+            if (topStats[i].Score > 1)
             {
                 topStatsListItems.Add($"{topStats[i].StatOwner.Name}: {topStats[i].Score} points");
             }
@@ -101,7 +105,8 @@ public class LeaderboardManager : MonoBehaviour
         listView.AddToClassList("list-view");
     }
 
-    // GetRealmPlayerTopStat() is a method that queries a realm for the player's Stat object with the highest score
+    // GetRealmPlayerTopStat() queries a realm for the player's Stat object with
+    // the highest score
     private int GetRealmPlayerTopStat()
     {
         var realmPlayer = realm.All<Player>().Where(p => p.Name == username).First();
