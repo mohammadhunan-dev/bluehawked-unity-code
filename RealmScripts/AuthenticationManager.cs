@@ -18,8 +18,10 @@ public class AuthenticationManager : MonoBehaviour
     private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
 
     #region PrivateMethods
-    // OnPressLogin() is an asynchronous method that calls RealmController.SetLoggedInUser to login with the values from the userInput and passInput
-    // and passes the currentPlayer to ScoreCardManager and LeaderboardManager; once logged in the login screen is hidden and the logout button is shown
+    // OnPressLogin() is an asynchronous method that calls
+    // RealmController.SetLoggedInUser to login and passes the currentPlayer to
+    // ScoreCardManager and LeaderboardManager; once logged in the login screen
+    // is hidden and the logout button is shown
     private static async void OnPressLogin()
     {
         try
@@ -79,21 +81,23 @@ public class AuthenticationManager : MonoBehaviour
     #endregion
 
     #region UnityLifecycleMethods
-    // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
-    // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
+    // Start() is a method inherited from MonoBehavior and is called on the
+    // frame when a script is enabled Start() defines AuthenticationScreen UI
+    // elements, and sets click event handlers for them
     private void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
         authWrapper = root.Q<VisualElement>("auth-wrapper");
-        logoutButton = root.Q<Button>("logout-button");
         subtitle = root.Q<Label>("subtitle");
         startButton = root.Q<Button>("start-button");
+        logoutButton = root.Q<Button>("logout-button");
         userInput = root.Q<TextField>("username-input");
-        passInput = root.Q<TextField>("password-input");
-        passInput.isPasswordField = true;
 
         logoutButton.clicked += RealmController.LogOut;
-    //  when the start button is clicked, toggle between registration modes
+
+        passInput = root.Q<TextField>("password-input");
+        passInput.isPasswordField = true;
+        //  when the start button is clicked, toggle between registration modes
         startButton.clicked += () =>
         {
             if (isInRegistrationMode == true)
