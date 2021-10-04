@@ -19,7 +19,8 @@ public class AuthenticationManager : MonoBehaviour
 
     #region PrivateMethods
 
-    // OnPressLogin() is a method that passes the username to the RealmController, ScoreCardManager, and LeaderboardManager
+    // OnPressLogin() is a method that passes the username to the
+    // RealmController, ScoreCardManager, and LeaderboardManager
     private static void OnPressLogin()
     {
         try
@@ -40,8 +41,9 @@ public class AuthenticationManager : MonoBehaviour
     #endregion
 
     #region UnityLifecycleMethods
-    // Start() is a method inherited from MonoBehavior and is called on the frame when a script is enabled
-    // Start() defines AuthenticationScreen UI elements, and sets click event handlers for them
+    // Start() is a method inherited from MonoBehavior and is called on the
+    // frame when a script is enabled Start() defines AuthenticationScreen UI
+    // elements, and sets click event handlers for them
     private void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -56,6 +58,7 @@ public class AuthenticationManager : MonoBehaviour
         {
             OnPressLogin();
         };
+
     }
     #endregion
 
