@@ -26,7 +26,8 @@ public class RealmController : MonoBehaviour
     public static User syncUser; // (Part 2 Sync): syncUser represents the realmApp's currently logged in user
 
     #region PublicMethods
-    // CollectToken() is a method that performs a write transaction to update the current playthrough Stat object's TokensCollected count
+    // CollectToken() performs a write transaction to update the current
+    // playthrough Stat object's TokensCollected count
     public static void CollectToken()
     {
         realm.Write(() =>
@@ -35,7 +36,8 @@ public class RealmController : MonoBehaviour
         });
     }
 
-    // DefeatEnemy() is a method that performs a write transaction to update the current playthrough Stat object's enemiesDefeated count
+    // DefeatEnemy() performs a write transaction to update the current
+    // playthrough Stat object's enemiesDefeated count
     public static void DefeatEnemy()
     {
         realm.Write(() =>
@@ -44,7 +46,9 @@ public class RealmController : MonoBehaviour
         });
     }
 
-    // DeleteCurrentStat() is a method that performs a write transaction to delete the current playthrough Stat object and remove it from the current Player object's Stats' list
+    // DeleteCurrentStat() performs a write transaction to delete the current
+    // playthrough Stat object and remove it from the current Player object's
+    // Stats' list
     public static void DeleteCurrentStat()
     {
         ScoreCardManager.UnRegisterListener();
@@ -55,14 +59,16 @@ public class RealmController : MonoBehaviour
         });
     }
 
-    // LogOut() is a method that logs out and reloads the scene
+    // LogOut() logs out and reloads the scene
     public static void LogOut()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
 
-    // PlayerWon() is a method that calculates and returns the final score for the current playthrough once the player has won the game
+
+    // PlayerWon() calculates and returns the final score for the current
+    // playthrough once the player has won the game
     public static int PlayerWon()
     {
         if (runTime <= 30) // if the game is won in less than or equal to 30 seconds, +80 bonus points
@@ -91,7 +97,9 @@ public class RealmController : MonoBehaviour
         return finalScore;
     }
 
-    // RestartGame() is a method that creates a new plathrough Stat object and shares this new Stat object with the ScoreCardManager to update in the UI and listen for changes to it
+    // RestartGame() creates a new plathrough Stat object and shares this new
+    // Stat object with the ScoreCardManager to update in the UI and listen for
+    // changes to it
     public static void RestartGame()
     {
         var stat = new Stat();
@@ -108,8 +116,9 @@ public class RealmController : MonoBehaviour
         StartGame(); // start the game by resetting the timer and officially starting a new run/playthrough
     }
 
-    // SetLoggedInUser() is a method that finds a Player object and creates a new Stat object for the current playthrough
-    // SetLoggedInUser() takes a userInput, representing a username, as a parameter
+    // SetLoggedInUser() finds a Player object and creates a new Stat object for
+    // the current playthrough SetLoggedInUser() takes a userInput, representing
+    // a username, as a parameter
     public static void SetLoggedInUser(string userInput)
     {
         realm = GetRealm();
@@ -187,13 +196,15 @@ public class RealmController : MonoBehaviour
         uiDocument.transform.parent = canvasGameObject.transform;
     }
 
-    // GetRealm() is a method that returns a realm instance
+    // GetRealm() returns a realm instance
     private static Realm GetRealm()
     {
         return Realm.GetInstance();
     }
 
-    // StartGame() is a method that records how long the player has been playing during the current playthrough (i.e since logging in or since last losing or winning)
+    // StartGame() records how long the player has been playing during the
+    // current playthrough (i.e since logging in or since last losing or
+    // winning)
     private static void StartGame()
     {
         // execute a timer every 10 second

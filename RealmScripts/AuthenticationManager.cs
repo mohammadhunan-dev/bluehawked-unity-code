@@ -12,10 +12,15 @@ public class AuthenticationManager : MonoBehaviour
     private static Button logoutButton;
     private static string loggedInUser;
     private static TextField userInput;
+    // (Part 2 Sync): isInRegistrationMode is used to toggle between
+    // authentication modes
+    private static bool isInRegistrationMode = false;
+    // (Part 2 Sync): passInput represents the password input
+    private static TextField passInput;
 
-    private static bool isInRegistrationMode = false; // (Part 2 Sync): isInRegistrationMode is used to toggle between authentication modes
-    private static TextField passInput; // (Part 2 Sync): passInput represents the password input
-    private static Button toggleLoginOrRegisterUIButton; // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle between login or registration modes
+    // (Part 2 Sync): toggleLoginOrRegisterUIButton is the button to toggle
+    // between login or registration modes
+    private static Button toggleLoginOrRegisterUIButton;
 
     #region PrivateMethods
     private static void HideAuthenticationUI()
@@ -24,8 +29,8 @@ public class AuthenticationManager : MonoBehaviour
         logoutButton.AddToClassList("show");
     }
 
-    // OnPressLogin() is a method that passes the username to the
-    // RealmController, ScoreCardManager, and LeaderboardManager
+    // OnPressLogin() passes the username to the RealmController,
+    // ScoreCardManager, and LeaderboardManager
     private static void OnPressLogin()
     {
         try
@@ -42,12 +47,13 @@ public class AuthenticationManager : MonoBehaviour
         }
     }
 
+
     #endregion
 
     #region UnityLifecycleMethods
-    // Start() is a method inherited from MonoBehavior and is called on the
-    // frame when a script is enabled Start() defines AuthenticationScreen UI
-    // elements, and sets click event handlers for them
+    // Start() is inherited from MonoBehavior and is called on the frame when a
+    // script is enabled Start() defines AuthenticationScreen UI elements, and
+    // sets click event handlers for them
     private void Start()
     {
         root = GetComponent<UIDocument>().rootVisualElement;
@@ -56,7 +62,6 @@ public class AuthenticationManager : MonoBehaviour
         startButton = root.Q<Button>("start-button");
         logoutButton = root.Q<Button>("logout-button");
         userInput = root.Q<TextField>("username-input");
-
         logoutButton.clicked += RealmController.LogOut;
         startButton.clicked += () =>
         {
