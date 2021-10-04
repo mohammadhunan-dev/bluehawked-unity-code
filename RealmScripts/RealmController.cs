@@ -55,11 +55,9 @@ public class RealmController : MonoBehaviour
         });
     }
 
-    public static void LogOut()
+    // LogOut() is an asynchronous method that logs out and reloads the scene
+    public static async void LogOut()
     {
-        LogOut() is an asynchronous method that logs out and reloads the scene
-        public static async void LogOut()
-        {
         await syncUser.LogOutAsync();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
