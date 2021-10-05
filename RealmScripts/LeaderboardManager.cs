@@ -25,8 +25,8 @@ public class LeaderboardManager : MonoBehaviour
     public async void SetLoggedInUser(string userInput)
     {
         username = userInput;
-
         realm = await GetRealm();
+
 
         // only create the leaderboard on the first run, consecutive
         // restarts/reruns will already have a leaderboard created

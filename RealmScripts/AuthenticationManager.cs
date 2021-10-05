@@ -51,6 +51,7 @@ public class AuthenticationManager : MonoBehaviour
             Debug.Log("an exception was thrown:" + ex.Message);
         }
     }
+
     // OnPressRegister() passes RealmController.OnPressRegister() the values of
     // the userInput and  passInput TextFields in order to register a user
     private static async void OnPressRegister()
@@ -61,8 +62,7 @@ public class AuthenticationManager : MonoBehaviour
 
             if (currentPlayer != null)
             {
-                authWrapper.AddToClassList("hide");
-                logoutButton.AddToClassList("show");
+                HideAuthenticationUI();
             }
             ScoreCardManager.SetLoggedInUser(currentPlayer.Name);
             LeaderboardManager.Instance.SetLoggedInUser(currentPlayer.Name);
@@ -89,7 +89,6 @@ public class AuthenticationManager : MonoBehaviour
         toggleLoginOrRegisterUIButton.text = "Have an account already? Login";
     }
     #endregion
-
     #region UnityLifecycleMethods
     // Start() is inherited from MonoBehavior and is called on the frame when a
     // script is enabled Start() defines AuthenticationScreen UI elements, and
@@ -135,6 +134,5 @@ public class AuthenticationManager : MonoBehaviour
         };
     }
     #endregion
-
 }
 

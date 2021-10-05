@@ -211,6 +211,7 @@ public class RealmController : MonoBehaviour
         uiDocument.transform.parent = canvasGameObject.transform;
     }
 
+
     // GetRealm() is an asynchronous method that returns a synced realm
     // GetRealm() takes a logged in Realms.Sync.User as a parameter
     private static async Task<Realm> GetRealm(User loggedInUser)
@@ -218,7 +219,6 @@ public class RealmController : MonoBehaviour
         var syncConfiguration = new SyncConfiguration("UnityTutorialPartition", loggedInUser);
         return await Realm.GetInstanceAsync(syncConfiguration);
     }
-
     // StartGame() records how long the player has been playing during the
     // current playthrough (i.e since logging in or since last losing or
     // winning)
