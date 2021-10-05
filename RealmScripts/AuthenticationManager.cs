@@ -48,8 +48,8 @@ public class AuthenticationManager : MonoBehaviour
     }
 
 
-    #endregion
 
+    #endregion
     #region UnityLifecycleMethods
     // Start() is inherited from MonoBehavior and is called on the frame when a
     // script is enabled Start() defines AuthenticationScreen UI elements, and
@@ -70,6 +70,5 @@ public class AuthenticationManager : MonoBehaviour
 
     }
     #endregion
-
 }
 

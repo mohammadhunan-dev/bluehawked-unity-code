@@ -24,6 +24,7 @@ public class LeaderboardManager : MonoBehaviour
     // SetLoggedInUser()  takes a userInput, representing a username, as a
     // parameter
     public void SetLoggedInUser(string userInput)
+
     {
         username = userInput;
 

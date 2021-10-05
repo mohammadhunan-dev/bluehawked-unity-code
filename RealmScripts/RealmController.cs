@@ -122,6 +122,7 @@ public class RealmController : MonoBehaviour
     public static void SetLoggedInUser(string userInput)
     {
         realm = GetRealm();
+        // query the realm to find any Player objects with the matching name
         var matchedPlayers = realm.All<Player>().Where(p => p.Name == userInput);
 
         if (matchedPlayers.Count() > 0) // if the player exists
